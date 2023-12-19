@@ -45,6 +45,9 @@
             >
           </li>
         </ul>
+        <button class="nav__toggle-btn" aria-label="Toggle navigation">
+          <span class="nav__icon">&nbsp;</span>
+        </button>
       </nav>
 
       <div class="header__title">
@@ -170,7 +173,7 @@
             </svg>
           </div>
           <h5 class="operations__header">
-            Tranfser money to anyone, instantly! No fees, no BS.
+            Transfer money to anyone, instantly! No fees, no BS.
           </h5>
           <p>
             Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do
@@ -342,5 +345,16 @@
       </form>
     </div>
     <div class="overlay hidden"></div>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', function () {
+      const toggleBtn = document.querySelector('.nav__toggle-btn');
+      const navLinks = document.querySelector('.nav__links');
+
+      toggleBtn.addEventListener('click', function () {
+        navLinks.classList.toggle('active');
+      });
+    });
+</script>
   </body>
 </html>
