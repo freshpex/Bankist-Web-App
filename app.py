@@ -501,6 +501,7 @@ def deposit():
         # Get form data
         amount = float(request.form['amount'])
         account_id = int(request.form['account_id'])
+        print(account_id)
 
         # Fetch the user's account
         account = Account.query.filter_by(id=account_id).first()
