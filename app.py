@@ -185,7 +185,18 @@ def dashboard():
         return redirect(url_for('login'))
     # Fetch the current user's accounts
     user_accounts = Account.query.filter_by(user_id=g.user['id']).all()
-    return render_template('dashboard.html', user_accounts=user_accounts)
+    
+    user_cards = Card.query.filter_by(user_id=g.user['id']).all()   
+    
+    # Fetch the current user's Transactions
+    user_transactions = Transaction.query.filter_by(user_id=g.user['id']).all()
+
+    # Calculate the sum of deposits and withdrawals
+    deposits = sum(transaction.amount for transaction in user_transactions if transaction.amount > 0)
+    withdrawals = sum(transaction.amount for transaction in user_transactions if transaction.amount < 0)
+
+    return render_template('dashboard.html', user_accounts=user_accounts, deposits=deposits, withdrawals=withdrawals, user_cards=user_cards)
+
 
 @app.route('/submit_feedback', methods=['POST'])
 def submit_feedback():

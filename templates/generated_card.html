@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="utf-8">
+  <meta content="width=device-width, initial-scale=1.0" name="viewport">
+  <link rel="icon" href="https://th.bing.com/th/id/OIP.iEljT-80HeVhxxkpjEEl2AHaEo?w=296&h=184&c=7&r=0&o=5&dpr=1.3&pid=1.7" type="image/png" sizes="16x16">
+  <title>Cards</title>
+  <meta content="" name="description">
+  <meta content="" name="keywords">
+
+ 
+  <!-- Favicons -->
+  <link href="../static/assets/img/favicon.png" rel="icon">
+  <link href="../static/assets/img/apple-touch-icon.png" rel="apple-touch-icon">
+
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,600,600i,700,700i|Jost:300,300i,400,400i,500,500i,600,600i,700,700i|Poppins:300,300i,400,400i,500,500i,600,600i,700,700i" rel="stylesheet">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-Zenh87qX5JnK2Jl0vWa8Ck2rdkQ2Bzep5IDxbcnCeuOxjzrPF/et3URy9Bv1WTRi" crossorigin="anonymous">
+  <!-- Vendor CSS Files -->
+  <link href="../static/assets/vendor/aos/aos.css" rel="stylesheet">
+  <link href="../static/assets/vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="../static/assets/vendor/bootstrap-icons/bootstrap-icons.css" rel="stylesheet">
+  <link href="../static/assets/vendor/boxicons/css/boxicons.min.css" rel="stylesheet">
+  <link href="../static/assets/vendor/glightbox/css/glightbox.min.css" rel="stylesheet">
+  <link href="../static/assets/vendor/remixicon/remixicon.css" rel="stylesheet">
+  <link href="../static/assets/vendor/swiper/swiper-bundle.min.css" rel="stylesheet">
+
+  <!-- Template Main CSS File -->
+  <link href="../staticgenerate.css" rel="stylesheet">
+
+  <!-- Import the Font Awesome library -->
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+</head>
+<!-- ======= Header ======= -->
+<header id="header"class="fixed-top " >
+  <div class="container d-flex align-items-center">
+
+    <h1 class="logo me-auto"><a href="/dashboard">Bank-Line</a></h1>
+    <nav id="navbar" class="navbar">
+      <ul>
+        <li><a class="nav-link scrollto active" href="/dashboard">Dashboard</a></li>
+        <li><a class="nav-link scrollto" href="/products">Products</a></li>
+        <li><a class="nav-link scrollto" href="/createaccount">Create Account</a></li>
+        <li><a class="nav-link scrollto" href="/accounts">My Accounts</a></li>
+        <li><a class="nav-link scrollto" href="/cardpayment">Card Payment</a></li>
+        <li><a class="nav-link scrollto" href="/feedbacks">My FeedBacks</a></li>
+        <li><a class="nav-link scrollto" href="/history">Transaction History</a></li>
+        <li><a class="getstarted scrollto" href="/signout">Sign Out</a></li>
+      </ul>
+      <i class="bi bi-list mobile-nav-toggle"></i>
+    </nav><!-- .navbar -->
+
+  </div>
+</header><!-- End Header -->
+<body>
+    <br><br><br>
+ <main>
+  <section id="breadcrumbs" class="breadcrumbs">
+    <div class="container mt-5">
+        <div class="card-container">
+          <div class="card">
+            <div class="card-face front">
+              <div class="Bank-Line" style="position: absolute; top: 10px; right: 10px;">Bank-Line</div>
+              <div class="logo">
+                {% if card_type == 'visa' %}
+                  <img src="https://img.icons8.com/color/96/000000/visa.png" class="card-logo" alt="Visa Logo">
+                {% elif card_type == 'master' %}
+                  <img src="https://img.icons8.com/color/96/000000/mastercard-logo.png" class="card-logo" alt="MasterCard Logo">
+                {% elif card_type == 'amex' %}
+                  <img src="https://img.icons8.com/color/96/000000/amex.png" class="card-logo" alt="Amex Logo">
+                {% elif card_type == 'discover' %}
+                  <img src="https://img.icons8.com/color/96/000000/discover.png" class="card-logo" alt="Discover Logo">
+                {% endif %}
+              </div>
+              <p class="card-text card-number">{{ card_number | group_digits }}</p>
+              <div class="card-expiration">Valid thru {{ expiration_date }}</div>
+              <div class="holder">
+                <div class="card-holder">{{ cardholder_name }}</div>
+              </div>
+            </div>
+            <div class="card-face back">
+              <div class="black-line"></div>
+              <div class="white-box">
+                <div class="cvv">{{ cvv }}</div>
+              </div>              
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <br><br>
+    <!-- ======= About Us Section ======= -->
+    <section id="about" class="about">
+        <div class="row content">
+        <div class="disclaimer">Disclaimer: This card is issued by Bank-Line and is subject to the terms
+          and conditions of the Cardholder Agreement. By using this card, 
+          you agree to abide by the Cardholder Agreement and the applicable laws and regulations. 
+          This card is not a credit card and does not provide any overdraft protection. 
+          You are responsible for maintaining sufficient funds in your linked account to cover your transactions. 
+          If you use this card for purchases or withdrawals in a foreign currency, you may incur additional fees 
+          and charges. This card may not be accepted by some merchants or ATMs, and may not be suitable for 
+          reservations that require you to show a physical card. Bank-Line is not liable for any loss, damage, 
+          or inconvenience caused by the use or misuse of this card. Please refer to the Cardholder Agreement 
+          for more details.
+        </div>
+    </div>
+    
+  </section><!-- End About Us Section -->
+
+    <br><br><br>
+    </main>
+
+    
+<!-- ======= Footer ======= -->
+<footer id="footer">
+
+   
+
+  <div class="footer-top">
+    <div class="container">
+      <div class="row">
+
+        <div class="col-lg-3 col-md-6 footer-contact">
+          <h3>Bank-Line</h3>
+          <p>
+            Kolkata <br>
+           
+            India <br><br>
+            <strong>Phone:</strong> +1 5589 55488 55<br>
+            <strong>Email:</strong> codeboom471@gmail.com<br>
+          </p>
+        </div>
+
+        <div class="col-lg-3 col-md-6 footer-links">
+          <h4>Useful Links</h4>
+          <ul>
+            <li><i class="bx bx-chevron-right"></i> <a href="#">Home</a></li>
+            <li><i class="bx bx-chevron-right"></i> <a href="#">About us</a></li>
+            <li><i class="bx bx-chevron-right"></i> <a href="#">Services</a></li>
+            <li><i class="bx bx-chevron-right"></i> <a href="#">Terms of service</a></li>
+            <li><i class="bx bx-chevron-right"></i> <a href="#">Privacy policy</a></li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer><!-- End Footer -->
+
+<div id="preloader"></div>
+<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+
+<!-- Vendor JS Files -->
+<script src="../static/assets/vendor/aos/aos.js"></script>
+<script src="../static/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+<script src="../static/assets/vendor/glightbox/js/glightbox.min.js"></script>
+<script src="../static/assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
+<script src="../static/assets/vendor/swiper/swiper-bundle.min.js"></script>
+<script src="../static/assets/vendor/waypoints/noframework.waypoints.js"></script>
+<script src="../static/assets/vendor/php-email-form/validate.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
+<!-- Template Main JS File -->
+<script src="../static/assets/js/main.js"></script>
+
+<!-- Include Bootstrap JS and Popper.js -->
+<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+
+
+</body>
+
+</html>
