@@ -222,3 +222,21 @@ h2 {
     padding: 2rem;
   }
 }
+
+    /* Add this style to make the status text blinking */
+    @keyframes blink {
+      0% {
+        opacity: 1;
+      }
+      50% {
+        opacity: 0;
+      }
+      100% {
+        opacity: 1;
+      }
+    }
+    
+    .blinking {
+      animation: blink 1s infinite; /* Change the duration if needed */
+    }
+    

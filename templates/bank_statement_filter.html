@@ -36,28 +36,15 @@
 
     <link rel="stylesheet" href="../static/style.css" />
     <link rel="stylesheet" href="../static/dashboard.css" />
+
+    <link href="../static/generate.css" rel="stylesheet">
+
+    <!-- Import the Font Awesome library -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
     <title>Bankist | When Banking meets Minimalist</title>
-    <style>
-      /* Add this style to make the status text blinking */
-  @keyframes blink {
-    0% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
-  }
-  
-  .blinking {
-    animation: blink 1s infinite; /* Change the duration if needed */
-  }
-  </style>
   </head>
   <body>
-    <header class="header">
       <nav class="nav">
         <a href="#" class="logo">
           <img
@@ -80,12 +67,13 @@
             <a class="nav__link" href="#section--3">Testimonials</a>
           </li>
           <li class="nav__item">
-            <a class="nav__link nav__link--btn btn--show-modal" href="/signout"
-              >Sign out</a
-            >
+            <a class="nav__link nav__link--btn btn--show-modal" href="/signout">Sign out</a>
           </li>
         </ul>
-      </nav>
+        <button class="nav__toggle-btn" aria-label="Toggle navigation">
+          <span class="nav__icon">&nbsp;</span>
+        </button>
+      </nav>  
 
 
     <br><br><br><br><br><br><br>
