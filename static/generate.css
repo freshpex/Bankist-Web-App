@@ -1,0 +1,119 @@
+.card-container {
+    perspective: 1000px;
+    width: 320px;
+    height: 200px;
+}
+
+.card {
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.5s;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative; /* Added to position Bank-Line and Disclaimer */
+}
+
+.card:hover {
+    transform: rotateY(180deg);
+}
+
+.card-face {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    backface-visibility: hidden;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.front {
+    background: linear-gradient(135deg, #3498db, #2c3e50);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.back {
+    background: linear-gradient(135deg, #3498db, #2c3e50);
+    color: #fff;
+    transform: rotateY(180deg);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+h5 {
+    margin-bottom: 10px;
+    font-size: 18px;
+}
+
+p {
+    margin: 0;
+    font-size: 14px;
+}
+
+.card-number {
+    font-family: 'Courier New', Courier, monospace;
+    font-size: 18px;
+    margin-bottom: 5px; /* Adjusted margin */
+}
+
+.card-logo {
+    max-width: 100px;
+    margin-left: 0; /* Adjusted margin */
+    padding-left: 0;
+    justify-content: right;
+    align-items: right;
+    text-align: right;
+}
+
+.card-holder {
+    margin-top: 5px;
+    margin-bottom: 10px; /* Added margin */
+    margin-left: 1px;
+    padding-left: 0;
+    justify-content: left;
+    align-items: left;
+    text-align: left;
+}
+
+.card-expiration {
+    margin-top: 8px; /* Adjusted margin */
+}
+
+.disclaimer {
+    position: absolute;
+    bottom: 5px;
+    text-align: center;
+    width: 77%;
+    color: red;
+}
+
+.black-line {
+    width: 100%;
+    height: 5px;
+    background: #000;
+    margin-top: 1px; /* Added margin */
+    margin-bottom: 5px; /* Added margin */
+    padding: 10px;
+}
+
+.white-box {
+    background: #fff;
+    width: 80%;
+    padding: 10px;
+    margin-top: 5px; /* Added margin */
+    text-align: right;
+}
+
+.cvv {
+    font-size: 18px;
+    color: #000;
+}
+
+.holder {
+    margin-top: 10px;
+}

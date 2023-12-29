@@ -36,25 +36,13 @@
 
     <link rel="stylesheet" href="../static/style.css" />
     <link rel="stylesheet" href="../static/dashboard.css" />
+
+    <link href="../static/generate.css" rel="stylesheet">
+
+    <!-- Import the Font Awesome library -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
     <title>Bankist | When Banking meets Minimalist</title>
-    <style>
-      /* Add this style to make the status text blinking */
-  @keyframes blink {
-    0% {
-      opacity: 1;
-    }
-    50% {
-      opacity: 0;
-    }
-    100% {
-      opacity: 1;
-    }
-  }
-  
-  .blinking {
-    animation: blink 1s infinite; /* Change the duration if needed */
-  }
-  </style>
   </head>
   <body>
     <header class="header">
@@ -85,6 +73,9 @@
             >
           </li>
         </ul>
+        <button class="nav__toggle-btn" aria-label="Toggle navigation">
+          <span class="nav__icon">&nbsp;</span>
+        </button>
       </nav>
 
       {% if user_accounts%}
@@ -106,6 +97,7 @@
         <p> <strong >Account ID: </strong>{{ account.id }}</p>
         <p> <strong >Account Number: </strong>{{ account.account_number }}</p>
         <p> <strong >Account Type: </strong>{{ account.account_type }}</p>
+        <a href="{{ url_for('bank_statement') }}" style="background-color: green; color: white;">Generate Bank Statement</a>
       </div>
       {% endfor %}
 
@@ -214,6 +206,86 @@
           <button class="form__btn form__btn--loan" type="submit">Request Loan</button>
         </form>
       </div>
+      <br><br>
+
+      {% if user_cards %}
+    <div class="container mt-5">
+      {% for card in user_cards %}
+      <div class="card-container">
+        <div class="card">
+          <div class="card-face front">
+            <div class="Bank-Line" style="position: absolute; top: 10px; right: 10px;">Bank-Line</div>
+            <div class="logo">
+              {% if card.card_type == 'visa' %}
+                <img src="https://img.icons8.com/color/96/000000/visa.png" class="card-logo" alt="Visa Logo">
+              {% elif card.card_type == 'master' %}
+                <img src="https://img.icons8.com/color/96/000000/mastercard-logo.png" class="card-logo" alt="MasterCard Logo">
+              {% elif card.card_type == 'amex' %}
+                <img src="https://img.icons8.com/color/96/000000/amex.png" class="card-logo" alt="Amex Logo">
+              {% elif card.card_type == 'discover' %}
+                <img src="https://img.icons8.com/color/96/000000/discover.png" class="card-logo" alt="Discover Logo">
+              {% endif %}
+            </div>
+            <p class="card-text card-number">{{ card.card_number | group_digits }}</p>
+            <div class="card-expiration">Valid thru {{ card.expiration_date }}</div>
+            <div class="holder"> 
+              <div class="card-holder">{{ card.cardholder_name }}</div>
+            </div>
+          </div>
+          <div class="card-face back">
+            <div class="black-line"></div>
+            <div class="white-box">
+              <div class="cvv">{{ card.cvv }}</div>
+            </div>              
+          </div>
+        </div>
+      </div>
+      {% endfor %}
+      {% else %}
+      <p>No cards available.</p>
+      {% endif %}
+      </div>
+      <br><br>
+
+      <!-- OPERATION: cards -->
+      <div class="operation operation--loan">
+        <h2>Request Card</h2>
+        <p id="errorMessage" style="color: red;"></p>
+        <form class="form form--loan" method="POST" action="{{ url_for('generate_card') }}">
+
+          <label class="form__label form__label--loan" for="card">Card Type:</label>
+          <select class="form__input form__input--loan-amount" name="card" id="card" required>
+            <option value="visa">Visa Card</option>
+            <option value="master">Master Card</option>
+            <option value="amex">Amex Card</option>
+            <option value="discover">Discover Card</option>
+          </select>          
+
+          <label class="form__input form__input--to" for="name">Name on Card:</label>
+          <input class="form__input form__input--to" type="text" name="name" id="name" required>
+
+          <button class="form__btn form__btn--loan" type="submit">Generate</button>
+        </form>
+      </div>
+        
+        <button type="submit" style="background-color: #3bb986;" ></button>
+      </form>  
+
+      <!-- OPERATION: Deposit -->
+      <div class="operation operation--transfer">
+        <h2>Deposit money</h2>
+        <p id="errorMessage" style="color: red;"></p>
+        <form class="form form--transfer" method="POST" action="/deposit">
+          
+          <input type="text" class="form__input form__input--to" name="acc_name" required/>
+          <label class="form__label" for="account_id" >Account Id Number</label>
+
+          <input type="number" class="form__input form__input--amount" name="amount" required/>
+          <label class="form__label" >Amount</label>
+          
+          <button class="form__btn form__btn--transfer" type="submit">Deposit</button>          
+        </form>
+      </div>
 
       <!-- OPERATION: CLOSE -->
       <div class="operation operation--close">
@@ -239,7 +311,7 @@
 
       <div class="icon-box" >
         <a href="/createaccount"></div> 
-        <button style="background-color: #3bb986;" class="col-md-5 d-flex align-items-stretch mt-4 mt-md-0" id="button1" >Create an Account </a></button>
+        <button class="col-md-5 d-flex align-items-stretch mt-4 mt-md-0" id="button1" >Create an Account </a></button>
       </div>
     {% endif %}
 
@@ -270,6 +342,10 @@
       </footer>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Include Bootstrap JS and Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
         // Function to update the current date dynamically
@@ -318,8 +394,6 @@
     });
 
     $(".form--transfer").on('submit', function(event) {
-      // Prevent the form from submitting normally
-      event.preventDefault();
     
       // Get the form data
       var formData = $(this).serialize();
@@ -343,8 +417,6 @@
     });
     
     $(".form--loan").on('submit', function(event) {
-      // Prevent the form from submitting normally
-      event.preventDefault();
     
       // Get the form data
       var formData = $(this).serialize();
