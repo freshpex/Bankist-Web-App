@@ -1,0 +1,373 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="shortcut icon" type="image/png" href="../static/img/icon.png" />
+    <!-- Primary Meta Tags -->
+    <title>Bankist</title>
+    <meta name="title" content="Bankist" />
+    <meta name="description" content="Trusted and Reliable with best loan offers" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://metatags.io/" />
+    <meta property="og:title" content="Bankist" />
+    <meta property="og:description" content="Trusted and Reliable with best loan offers" />
+    <meta property="og:image" content="https://th.bing.com/th/id/OIP.OkJahuNQcXg1CDceClVR-QHaEC?w=325&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://metatags.io/" />
+    <meta property="twitter:title" content="Bankist" />
+    <meta property="twitter:description" content="Trusted and Reliable with best loan offers" />
+    <meta property="twitter:image" content="https://th.bing.com/th/id/OIP.OkJahuNQcXg1CDceClVR-QHaEC?w=325&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" />
+
+    <!-- Meta Tags Generated with https://metatags.io -->
+
+    <!-- <link rel="icon" href="https://th.bing.com/th/id/OIP.iEljT-80HeVhxxkpjEEl2AHaEo?w=296&h=184&c=7&r=0&o=5&dpr=1.3&pid=1.7" type="image/png" sizes="16x16"> -->
+
+    <link
+      href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600&display=swap"
+      rel="stylesheet"
+    />
+    <script defer src="../static/script.js"></script>
+
+    <link rel="stylesheet" href="../static/style.css" />
+    <link rel="stylesheet" href="../static/dashboard.css" />
+    <title>Bankist | When Banking meets Minimalist</title>
+    <style>
+      /* Add this style to make the status text blinking */
+  @keyframes blink {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  
+  .blinking {
+    animation: blink 1s infinite; /* Change the duration if needed */
+  }
+  </style>
+  </head>
+  <body>
+    <header class="header">
+      <nav class="nav">
+        <a href="#" class="logo">
+          <img
+            src="../static/img/logo.png"
+            alt="Bankist logo"
+            class="nav__logo"
+            designer="Andrew Tsegaye"
+            data-version-number="3.0"
+            id="logo"
+          />
+        </a>
+        <ul class="nav__links">
+          <li class="nav__item">
+            <a class="nav__link" href="/dashboard">Dashboard</a>
+          </li>
+          <li class="nav__item">
+            <a class="nav__link" href="#section--2">Operations</a>
+          </li>
+          <li class="nav__item">
+            <a class="nav__link" href="#section--3">Testimonials</a>
+          </li>
+          <li class="nav__item">
+            <a class="nav__link nav__link--btn btn--show-modal" href="/signout"
+              >Sign out</a
+            >
+          </li>
+        </ul>
+      </nav>
+
+      {% if user_accounts%}
+    <main class="app">
+      {% for account in user_accounts %}
+      <!-- BALANCE -->
+      <div class="balance">
+        <div>
+          <p class="balance__label">Current balance</p>
+          <p class="balance__date">
+            As of <span class="date" id="currentDate"></span>
+          </p>
+        </div>
+        <p class="balance__value" id="balance-{{ account.id }}">{{ account.balance }}$
+          <button onclick="toggleBalance(this)" data-target="balance-{{ account.id }}">
+          <i class="fa fa-eye"></i>
+      </button>
+        </p>
+        <p> <strong >Account ID: </strong>{{ account.id }}</p>
+        <p> <strong >Account Number: </strong>{{ account.account_number }}</p>
+        <p> <strong >Account Type: </strong>{{ account.account_type }}</p>
+      </div>
+      {% endfor %}
+
+      <!-- MOVEMENTS -->
+      {% if user_transactions %}
+      <div class="movements">
+        {% for transaction in user_transactions %}
+        <div>
+        {% if transaction.amount > 0 %}
+        <div class="movements__row">
+          <div class="movements__type movements__type--deposit">deposit</div>
+          <div class="movements__date">{{ transaction.date }}</div>
+          <div class="movements__value">{{ transaction.amount }}$</div>
+        </div>
+        {% else %}
+        <div class="movements__row">
+          <div class="movements__type movements__type--withdrawal">
+            withdrawal
+          </div>
+          <div class="movements__date">{{transaction.date}}</div>
+          <div class="movements__value">{{ transaction.amount }}$</div>
+        </div>        
+        {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+      {% else %}
+        <div>
+          <p>No transaction history available.</p>
+        </div>
+      {% endif %}
+
+      <!-- SUMMARY -->
+      {% if user_transactions %}
+      <div class="summary">
+        {% for transaction in user_transactions %}
+        <p class="summary__label">In</p>
+        <p class="summary__value summary__value--in">{{ deposits }}$</p>
+        <p class="summary__label">Out</p>
+        <p class="summary__value summary__value--out">{{ withdrawals }}$</p>
+        <p class="summary__label">Interest</p>
+        <p class="summary__value summary__value--interest">0000$</p>
+        <button class="btn--sort">&downarrow; SORT</button>
+        {% endfor %}
+      </div>
+      {% else %}
+        <div>
+          <p>No transaction Summary available.</p>
+        </div>
+      {% endif %}
+
+      <!-- OPERATION: TRANSFERS -->
+      <div class="operation operation--transfer">
+        <h2>Transfer money</h2>
+        <p id="errorMessage" style="color: red;"></p>
+        <form class="form form--transfer" method="POST" action="{{ url_for('process_transaction') }}">
+          <input type="text" class="form__input form__input--to" name="acc_name" required/>
+          <label class="form__label">Transfer to</label>
+
+          <input type="number" class="form__input form__input--amount" name="amount" step="0.01" required/>
+          <label class="form__label" >Amount</label>
+
+          <label class="form__label" for="transaction_type">Transaction Type:</label>
+          <select class="form__input form__input--to" name="transaction_type" id="transaction_type" required>
+              <option value="local">Local Transfer</option>
+              <option value="international">International Transfer</option>
+          </select>
+          <div id="international_fields" style="display: none;">
+              <label class="form__label" for="destination_country">Destination Country:</label>
+              <select class="form__input form__input--to" name="destination_country" required>
+                  <option value="us">United States</option>
+                  <option value="uk">United Kingdom</option>
+              </select>
+              <label class="form__label" for="currency">Currency:</label>
+              <select class="form__input form__input--to" name="currency" required>
+                  <option value="usd">US Dollar (USD)</option>
+                  <option value="gbp">British Pound (GBP)</option>
+              </select>
+          </div>
+      
+          <label class="form__label" for="acc_number">IBAN Number :</label>
+          <input class="form__input form__input--to" type="number" name="acc_number" required>      
+        
+          <label class="form__label" for="source_account">Source Account ID:</label>
+          <select class="form__input form__input--to" name="source_account" required>
+              {% for account in user_accounts %}
+                  <option value="{{ account.id }}">{{ account.id }}</option>
+              {% endfor %}
+          </select>
+          
+          <button class="form__btn form__btn--transfer" type="submit">Transfer</button>          
+        </form>
+      </div>
+
+      <!-- OPERATION: LOAN -->
+      <div class="operation operation--loan">
+        <h2>Request loan</h2>
+        <p id="errorMessage" style="color: red;"></p>
+        <form class="form form--loan" method="POST" action="/request_loan">
+          <input type="number" class="form__input form__input--loan-amount" name="amount" required/>
+          <label class="form__label form__label--loan">Amount</label>
+
+          <label class="form__input form__input--to" for="account_id">Account ID:</label>
+          <input class="form__input form__input--to" type="text" name="account_id" required>
+
+          <button class="form__btn form__btn--loan" type="submit">Request Loan</button>
+        </form>
+      </div>
+
+      <!-- OPERATION: CLOSE -->
+      <div class="operation operation--close">
+        <h2>Loan History for Account ID {{ account_id }}</h2>
+        {% if loan_history %}
+          <ul>
+            {% for loan in loan_history %}
+              <li>{{ loan.date }} <strong>- Loan Amount:</strong> {{ loan.amount }}, Status: <span class="blinking">{{ loan.status }}</span></li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p style="color: white">No loan history available.</p>
+        {% endif %}
+      </div>
+    </main>
+    {% else %}
+      <!-- OPERATION: Create Account -->
+      
+    <br><br><br><br><br><br><br>
+    <div class="operation operation--loan">
+      <p style="color:red;"> No account created yet</p>
+      <h2>Please Create an Account</h2>
+
+      <div class="icon-box" >
+        <a href="/createaccount"></div> 
+        <button style="background-color: #3bb986;" class="col-md-5 d-flex align-items-stretch mt-4 mt-md-0" id="button1" >Create an Account </a></button>
+      </div>
+    {% endif %}
+
+      <footer class="footer">
+        <ul class="footer__nav">
+          <li class="footer__item">
+            <a class="footer__link" href="#">About</a>
+          </li>
+          <li class="footer__item">
+            <a class="footer__link" href="#">Pricing</a>
+          </li>
+          <li class="footer__item">
+            <a class="footer__link" href="#">Terms of Use</a>
+          </li>
+          <li class="footer__item">
+            <a class="footer__link" href="#">Privacy Policy</a>
+          </li>
+          <li class="footer__item">
+            <a class="footer__link" href="#">Careers</a>
+          </li>
+          <li class="footer__item">
+            <a class="footer__link" href="#">Blog</a>
+          </li>
+          <li class="footer__item">
+            <a class="footer__link" href="#">Contact Us</a>
+          </li>
+        </ul>
+      </footer>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script>
+      document.addEventListener('DOMContentLoaded', function () {
+        // Function to update the current date dynamically
+        function updateCurrentDate() {
+          const currentDateElement = document.getElementById('currentDate');
+          const currentDate = new Date();
+    
+          // Format the date as per your requirement
+          const formattedDate = `${currentDate.getMonth() + 1}/${currentDate.getDate()}/${currentDate.getFullYear()}`;
+    
+          // Display the formatted date
+          currentDateElement.textContent = formattedDate;
+        }
+    
+        // Call the function to update the date initially
+        updateCurrentDate();
+    
+        // Set up an interval to update the date every second
+        setInterval(updateCurrentDate, 1000);
+      });
+
+      function toggleBalance(button) {
+        // Get the target element id from the button attribute
+        var targetId = button.getAttribute("data-target");
+        // Get the target element by id
+        var target = document.getElementById(targetId);
+        // Toggle the display property of the target element
+        if (target.style.display === "none") {
+          target.style.display = "inline";
+          // Change the eye icon to open
+          button.innerHTML = "<i class='fa fa-eye'></i>";
+        } else {
+          target.style.display = "none";
+          // Change the eye icon to closed
+          button.innerHTML = "<i class='fa fa-eye-slash'></i>";
+        }
+      }
+
+      document.getElementById('transaction_type').addEventListener('change', function() {
+        var internationalFields = document.getElementById('international_fields');
+        if (this.value === 'international') {
+            internationalFields.style.display = 'block';
+        } else {
+            internationalFields.style.display = 'none';
+        }
+    });
+
+    $(".form--transfer").on('submit', function(event) {
+      // Prevent the form from submitting normally
+      event.preventDefault();
+    
+      // Get the form data
+      var formData = $(this).serialize();
+    
+      // Send the form data to the server
+      $.ajax({
+        type: 'POST',
+        url: '/process_transaction',
+        data: formData,
+        success: function(response) {
+          // Update the page based on the response
+          if (response.success) {
+            // Transaction was successful, update the page accordingly
+            $("#errorMessage").text(""); // Clear any previous error message
+          } else {
+            // Transaction failed, show an error message
+            $("#errorMessage").text(response.error);
+          }
+        }
+      });
+    });
+    
+    $(".form--loan").on('submit', function(event) {
+      // Prevent the form from submitting normally
+      event.preventDefault();
+    
+      // Get the form data
+      var formData = $(this).serialize();
+    
+      // Send the form data to the server
+      $.ajax({
+        type: 'POST',
+        url: '/request_loan',
+        data: formData,
+        success: function(response) {
+          // Update the page based on the response
+          if (response.success) {
+            // Loan request was successful, update the page accordingly
+            $("#errorMessage").text(""); // Clear any previous error message
+          } else {
+            // Loan request failed, show an error message
+            $("#errorMessage").text(response.error);
+          }
+        }
+      });
+    });
+    
+    </script>
+    </body>
+  </html>
+  

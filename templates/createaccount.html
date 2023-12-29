@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta http-equiv="X-UA-Compatible" content="ie=edge" />
+    <link rel="shortcut icon" type="image/png" href="../static/img/icon.png" />
+    <!-- Primary Meta Tags -->
+    <title>Bankist</title>
+    <meta name="title" content="Bankist" />
+    <meta name="description" content="Trusted and Reliable with best loan offers" />
+
+    <!-- Open Graph / Facebook -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://metatags.io/" />
+    <meta property="og:title" content="Bankist" />
+    <meta property="og:description" content="Trusted and Reliable with best loan offers" />
+    <meta property="og:image" content="https://th.bing.com/th/id/OIP.OkJahuNQcXg1CDceClVR-QHaEC?w=325&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" />
+
+    <!-- Twitter -->
+    <meta property="twitter:card" content="summary_large_image" />
+    <meta property="twitter:url" content="https://metatags.io/" />
+    <meta property="twitter:title" content="Bankist" />
+    <meta property="twitter:description" content="Trusted and Reliable with best loan offers" />
+    <meta property="twitter:image" content="https://th.bing.com/th/id/OIP.OkJahuNQcXg1CDceClVR-QHaEC?w=325&h=180&c=7&r=0&o=5&dpr=1.3&pid=1.7" />
+
+    <!-- Meta Tags Generated with https://metatags.io -->
+
+    <!-- <link rel="icon" href="https://th.bing.com/th/id/OIP.iEljT-80HeVhxxkpjEEl2AHaEo?w=296&h=184&c=7&r=0&o=5&dpr=1.3&pid=1.7" type="image/png" sizes="16x16"> -->
+
+    <link
+      href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600&display=swap"
+      rel="stylesheet"
+    />
+    <script defer src="../static/script.js"></script>
+
+    <link rel="stylesheet" href="../static/style.css" />
+    <title>Bankist | When Banking meets Minimalist</title>
+  </head>
+  <body>
+    <header class="header">
+      <nav class="nav">
+        <a href="#" class="logo">
+          <img
+            src="../static/img/logo.png"
+            alt="Bankist logo"
+            class="nav__logo"
+            designer="Andrew Tsegaye"
+            data-version-number="3.0"
+            id="logo"
+          />
+        </a>
+        <ul class="nav__links">
+          <li class="nav__item">
+            <a class="nav__link" href="/dashboard">Dashboard</a>
+          </li>
+          <li class="nav__item">
+            <a class="nav__link" href="#section--2">Operations</a>
+          </li>
+          <li class="nav__item">
+            <a class="nav__link" href="#section--3">Testimonials</a>
+          </li>
+          <li class="nav__item">
+            <a class="nav__link nav__link--btn btn--show-modal" href="/signout"
+              >Sign out</a
+            >
+          </li>
+        </ul>
+      </nav>
+
+    <p id="errorMessage" style="color: red;"></p>
+    <form class="form form--loan" method="POST" action="/createaccount">
+
+        <label  for="fname" class="form__label">First Name:</label>
+        <input type="text" name="fname" required>
+        <br>
+
+        <label for="lname" class="form__label">Last Name:</label>
+        <input  type="text" name="lname" required>
+        <br>
+
+        <label class="form__label" for="gender">Gender:</label><br>
+        <input  type="radio" id="male" name="gender" value="male">
+
+        <label  for="male">Male</label><br>
+        <input  type="radio" id="female" name="gender" value="female">
+
+        <label for="female">Female</label><br>
+        <input  type="radio" id="other" name="gender" value="other">
+
+        <label  for="other">Other</label>
+        <br>
+
+        <br>
+
+        <label for="account_type" >Account Type:</label> <!-- Changed 'account' to 'account_type' -->
+        <select  name="account_type" required>
+            <option value="Personal">Personal</option>
+            <option value="Business">Business</option>
+            <option value="Cooperate">Cooperate</option>
+            <option value="Company">Company</option>
+            <option value="Investment">Investment</option>
+        </select> 
+        <br>
+
+        <button class="form__btn" type="submit">Create</button>
+    </form>
+</body>
+</html>

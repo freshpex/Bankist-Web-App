@@ -337,39 +337,148 @@
     <div class="modal hidden">
       <button class="btn--close-modal">&times;</button>
       <h2 class="modal__header">
-        Open your bank account <br />
-        in just <span class="highlight">5 minutes</span>
+          Open your bank account <br />
+          in just <span class="highlight">5 minutes</span>
       </h2>
-      <form class="modal__form" action="/signup" method="post">
-        <label for="fname">First Name</label>
-        <input id="fname" name="fname" type="text" />
-
-        <label for="lname">Last Name</label>
-        <input id="lname" name="fname" type="text" />
-
-        <label for="username" >Username</label>
-        <input id="username" name="username" type="text" />
-
-        <label for="email" >Email Address</label>
-        <input id="email" name="email" type="email" />
-
-        <label for="password" >Password</label>
-        <input id="password" name="password" type="password" />
-
-        <button type="submit" class="btn">Next step</button>
-      </form>
+      <div id="signupForm">
+          <p id="errorMessage" style="color: red;"></p>
+        <form id="signupForm" class="modal__form" action="/signup" method="post">
+          <label for="fname">First Name</label>
+          <input id="fname" name="fname" type="text" />
+      
+          <label for="lname">Last Name</label>
+          <input id="lname" name="lname" type="text" />
+      
+          <label for="username">Username</label>
+          <input id="username" name="username" type="text" />
+      
+          <label for="email">Email Address</label>
+          <input id="email" name="email" type="email" />
+      
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" />
+      
+          <button type="submit" id="signUpBtn" class="btn">Next step</button>
+        </form>
+        <p id="showLoginBtn" class="btn">Already have an account? Click here to login</p>
+      </div>
+      
+      <div id="loginForm" style="display: none;">
+        <p id="errorMessage" style="color: red;"></p>
+        <form class="modal__form" action="/login" method="post">
+          <label for="username">Username</label>
+          <input id="username" name="username" type="text" />
+      
+          <label for="password">Password</label>
+          <input id="password" name="password" type="password" />
+      
+          <button type="submit" class="btn">Complete</button>
+        </form>
+      </div>      
+      
+      <p id="showSignupBtn" class="btn" style="display: none;">Don't have an account? Click here to sign up</p>
     </div>
-    <div class="overlay hidden"></div>
+      <div class="overlay hidden"></div>
 
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const toggleBtn = document.querySelector('.nav__toggle-btn');
-      const navLinks = document.querySelector('.nav__links');
+    </form>
+  </div>
 
-      toggleBtn.addEventListener('click', function () {
-        navLinks.classList.toggle('active');
+  <p id="showSignupBtn" class="btn" style="display: none;">Don't have an account? Click here to sign up</p>
+</div>
+<div class="overlay hidden"></div>
+
+<script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
+<script>
+  document.getElementById('signupForm').addEventListener('submit', function (event) {
+      // Prevent the form from submitting normally
+      event.preventDefault();
+
+      // Get the form data
+      var formData = new FormData(event.target);
+
+      // Send the form data to the server
+      fetch('/signup', {
+          method: 'POST',
+          body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              // Hide the signup form
+              document.getElementById('signupForm').style.display = 'none';
+
+              // Show the login form
+              document.getElementById('loginForm').style.display = 'block';
+              $("#errorMessage").text("");
+          } else {
+              // Display signup error on the form
+              $("#errorMessage").text(data.error);
+          }
+      })
+      .catch(error => {
+          // Handle network error
+          console.log("Error:", error);
+          $("#errorMessage").text(error);
       });
+  });
+
+  document.getElementById('showLoginBtn').addEventListener('click', function () {
+      // Hide the signup form
+      document.getElementById('signupForm').style.display = 'none';
+
+      // Show the login form
+      document.getElementById('loginForm').style.display = 'block';
+  });
+
+  document.getElementById('showSignupBtn').addEventListener('click', function () {
+      // Hide the login form
+      document.getElementById('loginForm').style.display = 'none';
+
+      // Show the signup form
+      document.getElementById('signupForm').style.display = 'block';
+  });
+
+  document.getElementById('loginForm').addEventListener('submit', function (event) {
+    // Prevent the form from submitting normally
+    event.preventDefault();
+
+    // Get the form data
+    var formData = new FormData(event.target);
+
+    // Send the form data to the server
+    fetch('/login', {
+        method: 'POST',
+        body: formData
+    })
+    .then(response => {
+        // Check if the response is HTML
+        if (response.headers.get('content-type').includes('text/html')) {
+            // Assume successful login and redirect
+            window.location.href = '/dashboard';
+        } else {
+            // Parse the response as JSON
+            return response.json();
+        }
+    })
+    .then(data => {
+        // If the response is JSON
+        if (data) {
+            if (data.success) {
+                // Redirect to the dashboard or perform other actions
+                window.location.href = '/dashboard';
+            } else {
+                // Display login error on the login form
+                $("#loginForm #errorMessage").text(data.error);
+            }
+        }
+    })
+    .catch(error => {
+        // Handle network error or other issues
+        console.log("Error:", error);
+        $("#loginForm #errorMessage").text(error);
     });
+});
+
 </script>
   </body>
 </html>
