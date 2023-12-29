@@ -168,26 +168,23 @@
 </footer><!-- End Footer -->
 
 <div id="preloader"></div>
-<a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
 
-<!-- Vendor JS Files -->
-<script src="../static/assets/vendor/aos/aos.js"></script>
-<script src="../static/assets/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
-<script src="../static/assets/vendor/glightbox/js/glightbox.min.js"></script>
-<script src="../static/assets/vendor/isotope-layout/isotope.pkgd.min.js"></script>
-<script src="../static/assets/vendor/swiper/swiper-bundle.min.js"></script>
-<script src="../static/assets/vendor/waypoints/noframework.waypoints.js"></script>
-<script src="../static/assets/vendor/php-email-form/validate.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-OERcA2EqjJCMA+/3y+gxIOqMEjwtxJY7qPCqsdltbNJuaOe923+mo//f6V8Qbsw3" crossorigin="anonymous"></script>
-<!-- Template Main JS File -->
-<script src="../static/assets/js/main.js"></script>
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <!-- Include Bootstrap JS and Popper.js -->
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>  
 
-<!-- Include Bootstrap JS and Popper.js -->
-<script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-
-
-</body>
-
-</html>
+    document.addEventListener('DOMContentLoaded', function () {
+      const toggleBtn = document.querySelector('.nav__toggle-btn');
+      const navLinks = document.querySelector('.nav__links');
+    
+      toggleBtn.addEventListener('click', function () {
+        navLinks.classList.toggle('active');
+      });
+    });
+    </script>
+    </body>
+  </html>
+  

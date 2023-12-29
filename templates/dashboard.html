@@ -282,11 +282,11 @@
         <p id="errorMessage" style="color: red;"></p>
         <form class="form form--transfer" method="POST" action="/deposit">
           
-          <input type="text" class="form__input form__input--to" name="acc_name" required/>
+          <input type="text" class="form__input form__input--to" id="account_id" name="account_id" required/>
           <label class="form__label" for="account_id" >Account Id Number</label>
 
-          <input type="number" class="form__input form__input--amount" name="amount" required/>
-          <label class="form__label" >Amount</label>
+          <input type="number" class="form__input form__input--amount" id="amount" name="amount" required/>
+          <label class="form__label" for="amount" >Amount</label>
           
           <button class="form__btn form__btn--transfer" type="submit">Deposit</button>          
         </form>
