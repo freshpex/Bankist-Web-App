@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, g, session, url_for, redirect, flash, send_from_directory, abort
+from flask import Flask, render_template, request, g, session, url_for, redirect, flash, send_from_directory, abort, jsonify
 import sqlite3, hashlib, os, requests
 from werkzeug.utils import secure_filename
 from model import db, User, Transaction, Receipt, Loan, Account, Card
@@ -107,28 +107,29 @@ def signup():
         password = request.form['password']
         firstname = request.form['fname']
         lastname = request.form['lname']
-        password = request.form['password']
         session['username'] = username
 
         # Check if user already exists
         if check_user_exists(email, username):
             error_message = 'User with the same email or username already exists.'
-            return render_template('signup.html', error=error_message)
+            return jsonify(success=False, error=error_message)
 
         # Hash password
         password_hash = hash_password(password)
 
         # Insert user into the database
-        query = "INSERT INTO user (email, username, password, firstname, lastname) VALUES (?, ?, ?)"
+        query = "INSERT INTO user (email, username, password, firstname, lastname) VALUES (?, ?, ?, ?, ?)"
         args = (email, username, password_hash, firstname, lastname)
 
         db_execute(query, args)
+        print("success")
 
         # Redirect to sign-in page
-        return redirect(url_for('login'))
+        return jsonify(success=True)
 
+    print("Failed")
     # Render sign-up page
-    return render_template('signup.html')
+    return jsonify(success=False)
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -145,7 +146,7 @@ def login():
         if not row:  # Check if row is empty
             # User not found
             error = 'Invalid email or password'
-            return render_template('login.html', error=error)
+            return jsonify(success=False, error=error)
 
         # Check password
         password_hash = row[0][1]
@@ -157,23 +158,16 @@ def login():
         else:
             # Password is incorrect
             error = 'Invalid email or password'
-            return render_template('login.html', error=error)
+            return jsonify(success=False, error=error)
 
     # Render sign-in page
-    return render_template('login.html')
-
+    return render_template('index.html')
 
 @app.route('/signout')
 def signout():
+    session.clear()
     session.pop('user_id', None)
     return redirect(url_for('index'))
-
-
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect(url_for('login'))
-
    
 @app.route('/')
 def index():
@@ -182,10 +176,21 @@ def index():
 @app.route('/dashboard')
 def dashboard():
     if g.user is None:
-        return redirect(url_for('login'))
+        return redirect(url_for('index'))
+    
     # Fetch the current user's accounts
     user_accounts = Account.query.filter_by(user_id=g.user['id']).all()
-    return render_template('dashboard.html', user_accounts=user_accounts)
+   
+    
+    # Fetch the current user's Transactions
+    user_transactions = Transaction.query.filter_by(user_id=g.user['id']).all()
+
+    # Calculate the sum of deposits and withdrawals
+    deposits = sum(transaction.amount for transaction in user_transactions if transaction.amount > 0)
+    withdrawals = sum(transaction.amount for transaction in user_transactions if transaction.amount < 0)
+
+    return render_template('dashboard.html', user_accounts=user_accounts, deposits=deposits, withdrawals=withdrawals)
+
 
 @app.route('/submit_feedback', methods=['POST'])
 def submit_feedback():
@@ -223,14 +228,15 @@ def createaccount():
         fname = request.form['fname']
         lname = request.form['lname']
         gender = request.form['gender']
-        username = request.form['username']
+        # picture = request.form['file']
+        # id_front = request.form['file_nf']
+        # id_back = request.form['file']
         account_type = request.form['account_type']
 
         # Fetch the current user instance
         current_user = User.query.get(g.user['id'])
 
         # Update the user details
-        current_user.username = username
         current_user.firstname = fname
         current_user.lastname = lname
         current_user.gender = gender
@@ -243,12 +249,10 @@ def createaccount():
         db.session.commit()
 
         # Redirect to account page
-        return redirect(url_for('accounts'))
+        return redirect(url_for('dashboard'))
 
     # Render the createaccount page
     return render_template('createaccount.html')
-
-
 
 @app.route('/accounts')
 def accounts():
@@ -257,7 +261,7 @@ def accounts():
     
     # Fetch the current user's accounts
     user_accounts = Account.query.filter_by(user_id=g.user['id']).all()
-    return render_template('accounts.html', user_accounts=user_accounts)  # Pass user_accounts to the template
+    return render_template('accounts.html', user_accounts=user_accounts)
 
 @app.template_filter('group_digits')
 def group_digits(s):
@@ -330,21 +334,6 @@ def feedbacks():
         return redirect(url_for('login'))
     return render_template('feedbacks.html')
 
-@app.route('/transaction')
-def transaction():
-    if g.user is None:
-        return redirect(url_for('login'))
-    user_accounts = User.query.filter_by(id=g.user['id']).all()
-    return render_template('transaction.html', user_accounts=user_accounts)
-
-@app.route('/history')
-def history():
-    if g.user is None:
-        return redirect(url_for('login'))
-
-    user_transactions = Transaction.query.filter_by(user_id=g.user['id']).all()
-    return render_template('history.html', user_transactions=user_transactions)
-
 @app.route('/view_receipt/<int:transaction_id>')
 def view_receipt(transaction_id):
     if g.user is None:
@@ -354,8 +343,7 @@ def view_receipt(transaction_id):
     return render_template('view_receipt.html', transaction=transaction)
 
 # Route for processing transactions
-@app.route('/process_transaction_logic', methods=['POST'])
-def process_transaction_logic(account_id, amount, description, transaction_type, destination_country=None, currency=None):
+def process_transaction_logic(account_id, amount, description, transaction_type, acc_number, destination_country=None, currency=None):
     account = Account.query.get(account_id)
     international_fee = INTERNATIONAL_FEE
 
@@ -364,24 +352,34 @@ def process_transaction_logic(account_id, amount, description, transaction_type,
 
     if account.balance < amount:
         return render_template('error.html', error_message='Insufficient funds.')
-    
-    if transaction_type == 'international':
-        amount = amount + international_fee
-        
+
     account.balance -= amount
 
+    international_fee = INTERNATIONAL_FEE
+
+    account.balance -= international_fee if transaction_type == 'international' else 0
+
+    # Get the destination account or create a new one
+    destination_account_number = acc_number
+    destination_account = Account.query.filter_by(account_number=destination_account_number).first()
+
+    if destination_account:
+        # If the destination account exists, update its balance
+        destination_account.balance += amount
+        db.session.commit()
+
+    # Create a new transaction
     new_transaction = Transaction(
         description=description,
         amount=-amount,
-        user_id=account.user_id
+        user_id=account.user_id,
+        timestamp=datetime.utcnow(),
+        account_number=acc_number
     )
 
     db.session.add(new_transaction)
     db.session.commit()
 
-    international_fee = INTERNATIONAL_FEE
-
-    account.balance -= international_fee if transaction_type == 'international' else 0
     new_receipt = Receipt(
         transaction_id=new_transaction.id,
         amount=amount,
@@ -392,14 +390,14 @@ def process_transaction_logic(account_id, amount, description, transaction_type,
 
     db.session.add(new_receipt)
     db.session.commit()
-    return render_template('confirmation.html', confirmation_message=f"Transaction successfully processed. Receipt ID: {new_receipt.id}")
 
-
+    return {'success': True, 'confirmation_message': f"Transaction successfully processed. Receipt ID: {new_receipt.id}"}
+ 
 # Route for processing transactions
 @app.route('/process_transaction', methods=['POST'])
 def process_transaction():
     if g.user is None:
-        return redirect(url_for('login'))
+        return jsonify(success=False, error='User not logged in.')
 
     transaction_type = request.form.get('transaction_type')
     account_id = request.form.get('source_account')
@@ -410,35 +408,13 @@ def process_transaction():
     acc_number = request.form.get('acc_number')
     acc_name = request.form.get('acc_name')
 
-    if transaction_type == 'international':
-        destination_country = request.form.get('destination_country')
-        currency = request.form.get('currency')
-        international_fee = INTERNATIONAL_FEE        
-        amount -= international_fee
-        
-    user_accounts = Account.query.filter_by(user_id=g.user['id']).all() 
+    result = process_transaction_logic(account_id, amount, description, transaction_type, acc_number, destination_country, currency)
 
-    if len(user_accounts) > 1:
-        return render_template('process_transaction.html', user_accounts=user_accounts, amount=amount, description=description, transaction_type=transaction_type, source_account=account_id, destination_country=destination_country, currency=currency) 
-    return process_transaction_logic(account_id, amount, description, transaction_type, destination_country, currency)
-
-# Route for processing transactions
-@app.route('/process_double_transaction', methods=['POST'])
-def process_double_transaction():
-    if g.user is None:
-        return redirect(url_for('login'))
-
-    transaction_type = request.form.get('transaction_type')
-    account_id = request.form.get('source_account')
-    amount = float(request.form.get('amount'))
-    description = request.form.get('description')
-    destination_country = request.form.get('destination_country')
-    currency = request.form.get('currency')
-    acc_number = request.form.get('acc_number')
-    acc_name = request.form.get('acc_name')
-    return process_transaction_logic(account_id, amount, description, transaction_type, destination_country, currency)
-
-
+    if 'error_message' in result:
+        return jsonify(success=False, error=result['error_message'])
+    else:
+        return jsonify(success=True, message=result['confirmation_message'])
+    
 @app.route('/loan_history/<int:account_id>')
 def loan_history(account_id):
     if g.user is None:
@@ -451,10 +427,19 @@ def loan_history(account_id):
 def request_loan():
     if g.user is None:
         return redirect(url_for('login'))
-    
+
     if request.method == 'POST':
         account_id = request.form.get('account_id')
-        amount = float(request.form.get('amount'))
+        amount = request.form.get('amount')
+
+        # Check if amount is not None and is a valid float
+        if amount is not None:
+            try:
+                amount = float(amount)
+            except ValueError:
+                return jsonify(success=False, error='Invalid amount provided.')
+        else:
+            return jsonify(success=False, error='Amount is required.')
 
         # Create a new loan request
         new_loan = Loan(account_id=account_id, amount=amount, status='pending')
@@ -463,11 +448,16 @@ def request_loan():
         db.session.add(new_loan)
         db.session.commit()
 
-        # Redirect to loan history page
-        return redirect(url_for('loan_history', account_id=account_id))
+        loan_history = Loan.query.filter_by(account_id=account_id).all()
 
-    # Render the loan request page
-    return render_template('request_loan.html')
+        loan_request_successful = loan_history.status
+
+        if loan_request_successful == 'pending':
+            return jsonify(success=True)
+        else:
+            return jsonify(success=False, error='Loan request failed.')
+
+    return render_template('request_loan.html')  # Replace with the actual template name
 
 @app.route('/deposit', methods=['GET', 'POST'])
 def deposit():
@@ -489,19 +479,6 @@ def deposit():
         if account.balance is None:
             account.balance = 0.0
 
-        # Perform the deposit
-        account.balance += amount
-
-        # Create a new transaction record
-        new_transaction = Transaction(
-            description='Deposit',
-            amount=amount,
-            user_id=g.user['id']
-        )
-
-        db.session.add(new_transaction)
-        db.session.commit()
-        
         # Create a Stripe Session
         session = stripe.checkout.Session.create(
             payment_method_types=['card'],
@@ -520,16 +497,70 @@ def deposit():
             cancel_url=url_for('deposit_cancel', _external=True),
         )
 
+        session['account_id'] = account_id
+        session['amount'] = amount
+
         return redirect(session.url)
+
     return render_template('deposit.html')
 
-@app.route('/deposit/success')
+@app.route('/deposit/success', methods=['GET'])
 def deposit_success():
-    return render_template('confirmation.html', confirmation_message='Deposit successful!')
+    # Retrieve the necessary information from the session
+    account_id = session.get('account_id')
+    amount = session.get('amount')
+
+    # Fetch the user's account
+    account = Account.query.filter_by(id=account_id).first()
+
+    if not account:
+        return render_template('error.html', error_message='Invalid account.')
+
+    # Ensure that account.balance is initialized to 0.0 if it's None
+    if account.balance is None:
+        account.balance = 0.0
+
+    # Perform the deposit
+    account.balance += amount
+
+    # Create a new transaction record
+    new_transaction = Transaction(
+        description='Deposit',
+        amount=amount,
+        user_id=g.user['id']
+    )
+
+    db.session.add(new_transaction)
+    db.session.commit()
+
+    return render_template('deposit_success.html')
+
 
 @app.route('/deposit/cancel')
 def deposit_cancel():
     return render_template('error.html', error_message='Deposit canceled.')
+
+@app.route('/bank_statement', methods=['GET', 'POST'])
+def bank_statement():
+    if g.user is None:
+        return redirect(url_for('login'))
+
+    if request.method == 'POST':
+        start_date = request.form.get('start_date')
+        end_date = request.form.get('end_date')
+
+        # Fetch transactions within the specified date range
+        start_datetime = datetime.strptime(start_date, '%Y-%m-%d')
+        end_datetime = datetime.strptime(end_date, '%Y-%m-%d')
+
+        user_transactions = Transaction.query.filter_by(user_id=g.user['id']).filter(
+            Transaction.timestamp >= start_datetime, Transaction.timestamp <= end_datetime).all()
+
+        return render_template('bank_statement.html', user_transactions=user_transactions)
+
+    # Render the bank statement filter form
+    return render_template('bank_statement_filter.html')
+
 
 @app.errorhandler(400)
 def handle_bad_request(e):
