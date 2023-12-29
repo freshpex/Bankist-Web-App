@@ -148,6 +148,7 @@
       <div class="operation operation--transfer">
         <h2>Transfer money</h2>
         <p id="errorMessage" style="color: red;"></p>
+        <div id="transactionMessage"></div>
         <form class="form form--transfer" method="POST" action="{{ url_for('process_transaction') }}">
           <label class="form__label">Transfer to</label>
           <input type="text" class="form__input form__input--to" name="acc_name" required/>
@@ -198,6 +199,7 @@
       <div class="operation operation--loan">
         <h2>Request loan</h2>
         <p id="errorMessage" style="color: red;"></p>
+        <div id="transactionMessage"></div>
         <form class="form form--loan" method="POST" action="/request_loan">
           <input type="number" class="form__input form__input--loan-amount" name="amount" required/>
           <label class="form__label form__label--loan">Amount</label>
@@ -396,51 +398,60 @@
         }
     });
 
-    $(".form--transfer").on('submit', function(event) {
-    
-      // Get the form data
-      var formData = $(this).serialize();
-    
-      // Send the form data to the server
-      $.ajax({
-        type: 'POST',
-        url: '/process_transaction',
-        data: formData,
-        success: function(response) {
-          // Update the page based on the response
-          if (response.success) {
-            // Transaction was successful, update the page accordingly
-            $("#errorMessage").text(""); // Clear any previous error message
+    // Update the form submission handling for both transfer and loan forms
+    document.querySelector('.form--transfer').addEventListener('submit', function (event) {
+      event.preventDefault(); // Prevent the default form submission
+
+      var formData = new FormData(this);
+
+      fetch('/process_transaction', {
+          method: 'POST',
+          body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              // Show success message and refresh the page
+              document.getElementById('transactionMessage').innerHTML = 'Transaction successful. Reloading page...';
+              setTimeout(function () {
+                  location.reload();
+              }, 2000); // Reload the page after 2 seconds (adjust as needed)
           } else {
-            // Transaction failed, show an error message
-            $("#errorMessage").text(response.error);
+              // Show error message
+              document.getElementById('transactionMessage').innerHTML = 'Transaction failed: ' + data.error;
           }
-        }
+      })
+      .catch(error => {
+          // Handle network or other errors
+          console.error('Error during fetch:', error);
       });
-    });
-    
-    $(".form--loan").on('submit', function(event) {
-    
-      // Get the form data
-      var formData = $(this).serialize();
-    
-      // Send the form data to the server
-      $.ajax({
-        type: 'POST',
-        url: '/request_loan',
-        data: formData,
-        success: function(response) {
-          // Update the page based on the response
-          if (response.success) {
-            // Loan request was successful, update the page accordingly
-            $("#errorMessage").text(""); // Clear any previous error message
+  });
+
+  // Similar handling for loan form
+  document.querySelector('.form--loan').addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      var formData = new FormData(this);
+
+      fetch('/request_loan', {
+          method: 'POST',
+          body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              document.getElementById('transactionMessage').innerHTML = 'Loan request successful. Reloading page...';
+              setTimeout(function () {
+                  location.reload();
+              }, 2000);
           } else {
-            // Loan request failed, show an error message
-            $("#errorMessage").text(response.error);
+              document.getElementById('transactionMessage').innerHTML = 'Loan request failed: ' + data.error;
           }
-        }
+      })
+      .catch(error => {
+          console.error('Error during fetch:', error);
       });
-    });    
+  });  
 
     document.addEventListener('DOMContentLoaded', function () {
       const toggleBtn = document.querySelector('.nav__toggle-btn');

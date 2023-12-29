@@ -201,7 +201,7 @@ def dashboard():
 @app.route('/submit_feedback', methods=['POST'])
 def submit_feedback():
     if g.user is None:
-        return redirect(url_for('login'))
+        return redirect(url_for('index'))
     
     name = request.form['name']
     feedback = request.form['feedback']
