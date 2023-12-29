@@ -195,7 +195,7 @@ def dashboard():
     deposits = sum(transaction.amount for transaction in user_transactions if transaction.amount > 0)
     withdrawals = sum(transaction.amount for transaction in user_transactions if transaction.amount < 0)
 
-    return render_template('dashboard.html', user_accounts=user_accounts, deposits=deposits, withdrawals=withdrawals, user_cards=user_cards, loan_history=loan_history)
+    return render_template('dashboard.html', user_accounts=user_accounts, deposits=deposits, withdrawals=withdrawals, user_cards=user_cards, loan_history=loan_history, user_transactions=user_transactions)
 
 
 @app.route('/submit_feedback', methods=['POST'])
@@ -337,7 +337,7 @@ def generate_card():
 @app.route('/feedbacks')
 def feedbacks():
     if g.user is None:
-        return redirect(url_for('login'))
+        return redirect(url_for('index'))
     return render_template('feedbacks.html')
 
 @app.route('/view_receipt/<int:transaction_id>')
