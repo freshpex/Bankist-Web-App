@@ -183,10 +183,13 @@ def dashboard():
     
     user_cards = Card.query.filter_by(user_id=g.user['id']).all()
     
-    for loan_id in user_accounts:
-        account_id = loan_id.id
-    
-    loan_history = Loan.query.filter_by(account_id=account_id).all()
+    if user_accounts:
+        for loan_id in user_accounts:
+            account_id = loan_id.id
+        loan_history = Loan.query.filter_by(account_id=account_id).all()
+    else:
+        loan_history = []
+
     
     # Fetch the current user's Transactions
     user_transactions = Transaction.query.filter_by(user_id=g.user['id']).all()
