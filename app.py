@@ -181,7 +181,12 @@ def dashboard():
     # Fetch the current user's accounts
     user_accounts = Account.query.filter_by(user_id=g.user['id']).all()
     
-    user_cards = Card.query.filter_by(user_id=g.user['id']).all()   
+    user_cards = Card.query.filter_by(user_id=g.user['id']).all()
+    
+    for loan_id in user_accounts:
+        account_id = loan_id.id
+    
+    loan_history = Loan.query.filter_by(account_id=account_id).all()
     
     # Fetch the current user's Transactions
     user_transactions = Transaction.query.filter_by(user_id=g.user['id']).all()
@@ -190,7 +195,7 @@ def dashboard():
     deposits = sum(transaction.amount for transaction in user_transactions if transaction.amount > 0)
     withdrawals = sum(transaction.amount for transaction in user_transactions if transaction.amount < 0)
 
-    return render_template('dashboard.html', user_accounts=user_accounts, deposits=deposits, withdrawals=withdrawals, user_cards=user_cards)
+    return render_template('dashboard.html', user_accounts=user_accounts, deposits=deposits, withdrawals=withdrawals, user_cards=user_cards, loan_history=loan_history)
 
 
 @app.route('/submit_feedback', methods=['POST'])
@@ -451,7 +456,8 @@ def request_loan():
 
         loan_history = Loan.query.filter_by(account_id=account_id).all()
 
-        loan_request_successful = loan_history.status
+        for loan in loan_history:
+            loan_request_successful = loan.status
 
         if loan_request_successful == 'pending':
             return jsonify(success=True)
