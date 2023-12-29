@@ -80,19 +80,31 @@
         <label class="form__label" for="gender">Gender:</label><br>
         <input  type="radio" id="male" name="gender" value="male">
 
-        <label  for="male">Male</label><br>
+        <label  class="form__label" for="male">Male</label><br>
         <input  type="radio" id="female" name="gender" value="female">
 
-        <label for="female">Female</label><br>
-        <input  type="radio" id="other" name="gender" value="other">
+        <label class="form__label" for="female">Female</label><br>
+        <input type="radio" id="other" name="gender" value="other">
 
-        <label  for="other">Other</label>
+        <label class="form__label" for="other">Other</label>
+        <br>
+
+        <label class="form__label" for="file" >Picture:</label>
+        <input class="form-control" id="file" type="file" name="file" required>
+        <br>
+
+        <label class="form__label" for="file_nf" >Nation ID Card Front:</label>
+        <input class="form-control" type="file" id="file_nf" name="file_nf" required>
+        <br>
+
+        <label class="form__label" for="file_nb" >Nation ID Card Back:</label>
+        <input class="form-control" id="file_nb" type="file" name="file_nb" required>
         <br>
 
         <br>
 
-        <label for="account_type" >Account Type:</label> <!-- Changed 'account' to 'account_type' -->
-        <select  name="account_type" required>
+        <label class="form__label" for="account_type" >Account Type:</label> <!-- Changed 'account' to 'account_type' -->
+        <select name="account_type" required>
             <option value="Personal">Personal</option>
             <option value="Business">Business</option>
             <option value="Cooperate">Cooperate</option>

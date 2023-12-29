@@ -239,7 +239,9 @@ def createaccount():
         fname = request.form['fname']
         lname = request.form['lname']
         gender = request.form['gender']
-        username = request.form['username']
+        picture = request.form['file']
+        id_front = request.form['file_nf']
+        id_back = request.form['file_nb']
         account_type = request.form['account_type']
 
         # Fetch the current user instance
