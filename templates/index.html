@@ -72,10 +72,8 @@
       </nav>
 
       <div class="header__title">
-        <!-- <h1 onclick="alert('HTML alert')"> -->
         <h1>
           When
-          <!-- Green highlight effect -->
           <span class="highlight">banking</span>
           meets<br />
           <span class="highlight">minimalist</span>
@@ -391,13 +389,10 @@
 <script src="https://code.jquery.com/jquery-3.6.4.min.js"></script>
     <script>
   document.getElementById('signupForm').addEventListener('submit', function (event) {
-      // Prevent the form from submitting normally
       event.preventDefault();
 
-      // Get the form data
       var formData = new FormData(event.target);
 
-      // Send the form data to the server
       fetch('/signup', {
           method: 'POST',
           body: formData
@@ -405,37 +400,27 @@
       .then(response => response.json())
       .then(data => {
           if (data.success) {
-              // Hide the signup form
               document.getElementById('signupForm').style.display = 'none';
 
-              // Show the login form
               document.getElementById('loginForm').style.display = 'block';
               $("#errorMessage").text("");
           } else {
-              // Display signup error on the form
               $("#errorMessage").text(data.error);
           }
       })
       .catch(error => {
-          // Handle network error
           console.log("Error:", error);
           $("#errorMessage").text(error);
       });
   });
 
   document.getElementById('showLoginBtn').addEventListener('click', function () {
-      // Hide the signup form
       document.getElementById('signupForm').style.display = 'none';
-
-      // Show the login form
       document.getElementById('loginForm').style.display = 'block';
   });
 
   document.getElementById('showSignupBtn').addEventListener('click', function () {
-      // Hide the login form
       document.getElementById('loginForm').style.display = 'none';
-
-      // Show the signup form
       document.getElementById('signupForm').style.display = 'block';
   });
 
@@ -457,15 +442,13 @@
             // Assume successful login and redirect
             window.location.href = '/dashboard';
         } else {
-            // Parse the response as JSON
             return response.json();
         }
     })
     .then(data => {
-        // If the response is JSON
         if (data) {
             if (data.success) {
-                // Redirect to the dashboard or perform other actions
+                // Redirect to the dashboard
                 window.location.href = '/dashboard';
             } else {
                 // Display login error on the login form

@@ -26,8 +26,6 @@
 
     <!-- Meta Tags Generated with https://metatags.io -->
 
-    <!-- <link rel="icon" href="https://th.bing.com/th/id/OIP.iEljT-80HeVhxxkpjEEl2AHaEo?w=296&h=184&c=7&r=0&o=5&dpr=1.3&pid=1.7" type="image/png" sizes="16x16"> -->
-
     <link
       href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600&display=swap"
       rel="stylesheet"
@@ -345,44 +343,32 @@
       </footer>
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
-    <!-- Include Bootstrap JS and Popper.js -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script>
       document.addEventListener('DOMContentLoaded', function () {
-        // Function to update the current date dynamically
         function updateCurrentDate() {
           const currentDateElement = document.getElementById('currentDate');
           const currentDate = new Date();
     
-          // Format the date as per your requirement
           const formattedDate = `${currentDate.getMonth() + 1}/${currentDate.getDate()}/${currentDate.getFullYear()}`;
-    
-          // Display the formatted date
+  
           currentDateElement.textContent = formattedDate;
         }
     
-        // Call the function to update the date initially
-        updateCurrentDate();
-    
-        // Set up an interval to update the date every second
+        updateCurrentDate();    
         setInterval(updateCurrentDate, 1000);
       });
 
       function toggleBalance(button) {
-        // Get the target element id from the button attribute
         var targetId = button.getAttribute("data-target");
-        // Get the target element by id
         var target = document.getElementById(targetId);
-        // Toggle the display property of the target element
         if (target.style.display === "none") {
           target.style.display = "inline";
-          // Change the eye icon to open
           button.innerHTML = "<i class='fa fa-eye'></i>";
         } else {
           target.style.display = "none";
-          // Change the eye icon to closed
           button.innerHTML = "<i class='fa fa-eye-slash'></i>";
         }
       }
@@ -396,44 +382,47 @@
         }
     });
 
-    $(".form--transfer").on('submit', function(event) {
-    
-      // Get the form data
-      var formData = $(this).serialize();
-    
-      // Send the form data to the server
-      $.ajax({
-        type: 'POST',
-        url: '/process_transaction',
-        data: formData,
-        success: function(response) {
-          // Update the page based on the response
-          if (response.success) {
-            // Transaction was successful, update the page accordingly
-            $("#errorMessage").text(""); // Clear any previous error message
+    document.querySelector('.form--transfer').addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      var formData = new FormData(this);
+
+      fetch('/process_transaction', {
+          method: 'POST',
+          body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              document.getElementById('transactionMessage').innerHTML = 'Transaction successful. Reloading page...';
+              setTimeout(function () {
+                  location.reload();
+              }, 2000); 
           } else {
-            // Transaction failed, show an error message
-            $("#errorMessage").text(response.error);
+              document.getElementById('transactionMessage').innerHTML = 'Transaction failed: ' + data.error;
           }
-        }
+      })
+      .catch(error => {
+          console.error('Error during fetch:', error);
       });
-    });
-    
-    $(".form--loan").on('submit', function(event) {
-    
-      // Get the form data
-      var formData = $(this).serialize();
-    
-      // Send the form data to the server
-      $.ajax({
-        type: 'POST',
-        url: '/request_loan',
-        data: formData,
-        success: function(response) {
-          // Update the page based on the response
-          if (response.success) {
-            // Loan request was successful, update the page accordingly
-            $("#errorMessage").text(""); // Clear any previous error message
+  });
+
+  document.querySelector('.form--loan').addEventListener('submit', function (event) {
+      event.preventDefault();
+
+      var formData = new FormData(this);
+
+      fetch('/request_loan', {
+          method: 'POST',
+          body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+          if (data.success) {
+              document.getElementById('transactionMessage').innerHTML = 'Loan request successful. Reloading page...';
+              setTimeout(function () {
+                  location.reload();
+              }, 2000);
           } else {
             // Loan request failed, show an error message
             $("#errorMessage").text(response.error);

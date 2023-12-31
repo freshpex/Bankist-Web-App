@@ -1,0 +1,3 @@
+# Ignore seed and schema files
+seed.sql
+schema.sql
