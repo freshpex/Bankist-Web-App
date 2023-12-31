@@ -61,6 +61,18 @@
             <a class="nav__link" href="/dashboard">Dashboard</a>
           </li>
           <li class="nav__item">
+            <a class="nav__link" href="/deposit">Deposit</a>
+          </li>
+          <li class="nav__item">
+            <a class="nav__link" href="/transfer">Transfer</a>
+          </li>
+          <li class="nav__item">
+            <a class="nav__link" href="/request_loan">Request loan</a>
+          </li>
+          <li class="nav__item">
+            <a class="nav__link" href="/cards">Request Card</a>
+          </li>
+          <li class="nav__item">
             <a class="nav__link" href="/feedbacks">Complains</a>
           </li>
           <li class="nav__item">
@@ -144,74 +156,6 @@
         </div>
       {% endif %}
 
-      <!-- OPERATION: TRANSFERS -->
-      <div class="operation operation--transfer">
-        <h2>Transfer money</h2>
-        <p id="errorMessage" style="color: red;"></p>
-        <div id="transactionMessage"></div>
-        <form class="form form--transfer" method="POST" action="{{ url_for('process_transaction') }}">
-          <label class="form__label">Transfer to</label>
-          <input type="text" class="form__input form__input--to" name="acc_name" required/>
-
-          <br>
-          <label class="form__label" >Amount</label>          
-          <input type="number" class="form__input form__input--amount" name="amount" step="0.01" required/>
-
-          <br>
-          <label class="form__label" for="transaction_type">Transaction Type:</label>
-          <select class="form__input form__input--amount" name="transaction_type" id="transaction_type" required>
-              <option value="local">Local Transfer</option>
-              <option value="international">International Transfer</option>
-          </select>
-          <br>
-          <div id="international_fields" style="display: none;">
-              <label class="form__label" for="destination_country">Destination Country:</label>
-              <select class="form__input form__input--amount" name="destination_country" required>
-                  <option value="us">United States</option>
-                  <option value="uk">United Kingdom</option>
-              </select>
-              <br>
-              <label class="form__label" for="currency">Currency:</label>
-              <select class="form__input form__input--amount" name="currency" required>
-                  <option value="usd">US Dollar (USD)</option>
-                  <option value="gbp">British Pound (GBP)</option>
-              </select>
-          </div>
-          <br>
-      
-          <label class="form__label" for="acc_number">IBAN Number :</label>
-          <input class="form__input form__input--amount" type="number" name="acc_number" required>      
-        
-          <br>
-          <label class="form__label" for="source_account">Source Account ID:</label>
-          <select class="form__input form__input--amount" name="source_account" required>
-              {% for account in user_accounts %}
-                  <option value="{{ account.id }}">{{ account.id }}</option>
-              {% endfor %}
-          </select>
-          
-          <br>
-          <button class="form__btn form__btn--transfer" type="submit">Transfer</button>          
-        </form>
-      </div>
-
-      <!-- OPERATION: LOAN -->
-      <div class="operation operation--loan">
-        <h2>Request loan</h2>
-        <p id="errorMessage" style="color: red;"></p>
-        <div id="transactionMessage" style="font-weight: bold;"></div>
-        <form class="form form--loan" method="POST" action="/request_loan">
-          <input type="number" class="form__input form__input--loan-amount" name="amount" required/>
-          <label class="form__label form__label--loan">Amount</label>
-
-          <label class="form__input form__input--to" for="account_id">Account ID:</label>
-          <input class="form__input form__input--to" type="text" name="account_id" required>
-
-          <button class="form__btn form__btn--loan" type="submit">Request Loan</button>
-        </form>
-      </div>
-      <br><br>
-
       {% if user_cards %}
     <div class="container mt-5">
       {% for card in user_cards %}
@@ -250,47 +194,6 @@
       {% endif %}
       </div>
       <br><br>
-
-      <!-- OPERATION: cards -->
-      <div class="operation operation--loan">
-        <h2>Request Card</h2>
-        <p id="errorMessage" style="color: red;"></p>
-        <form class="form form--loan" method="POST" action="{{ url_for('generate_card') }}">
-
-          <label class="form__label form__label--loan" for="card">Card Type:</label>
-          <select class="form__input form__input--loan-amount" name="card" id="card" required>
-            <option value="visa">Visa Card</option>
-            <option value="master">Master Card</option>
-            <option value="amex">Amex Card</option>
-            <option value="discover">Discover Card</option>
-          </select>          
-
-          <label class="form__input form__input--to" for="name">Name on Card:</label>
-          <input class="form__input form__input--to" type="text" name="name" id="name" required>
-
-          <button class="form__btn form__btn--loan" type="submit">Generate</button>
-        </form>
-      </div>
-        
-        <button type="submit" style="background-color: #3bb986;" ></button>
-      </form>  
-      <br><br>
-
-      <!-- OPERATION: Deposit -->
-      <div class="operation operation--transfer">
-        <h2>Deposit money</h2>
-        <p id="errorMessage" style="color: red;"></p>
-        <form class="form form--transfer" method="POST" action="/deposit">
-          
-          <label class="form__label" for="account_id" >Account Id Number</label>
-          <input type="number" class="form__input form__input--amounto" id="account_id" name="account_id" required/>
-          
-          <label class="form__label" for="amount" >Amount</label>
-          <input type="number" class="form__input form__input--amount" id="amount" name="amount" required/>
-          
-          <button class="form__btn form__btn--transfer" type="submit">Deposit</button>          
-        </form>
-      </div><br><br>
 
       <!-- OPERATION: CLOSE -->
       <div class="operation operation--close">
@@ -388,70 +291,6 @@
           button.innerHTML = "<i class='fa fa-eye-slash'></i>";
         }
       }
-
-      document.getElementById('transaction_type').addEventListener('change', function() {
-        var internationalFields = document.getElementById('international_fields');
-        if (this.value === 'international') {
-            internationalFields.style.display = 'block';
-        } else {
-            internationalFields.style.display = 'none';
-        }
-    });
-
-    // Update the form submission handling for both transfer and loan forms
-    document.querySelector('.form--transfer').addEventListener('submit', function (event) {
-      event.preventDefault(); // Prevent the default form submission
-
-      var formData = new FormData(this);
-
-      fetch('/process_transaction', {
-          method: 'POST',
-          body: formData
-      })
-      .then(response => response.json())
-      .then(data => {
-          if (data.success) {
-              // Show success message and refresh the page
-              document.getElementById('transactionMessage').innerHTML = 'Transaction successful. Reloading page...';
-              setTimeout(function () {
-                  location.reload();
-              }, 2000); // Reload the page after 2 seconds (adjust as needed)
-          } else {
-              // Show error message
-              document.getElementById('transactionMessage').innerHTML = 'Transaction failed: ' + data.error;
-          }
-      })
-      .catch(error => {
-          // Handle network or other errors
-          console.error('Error during fetch:', error);
-      });
-  });
-
-  // Similar handling for loan form
-  document.querySelector('.form--loan').addEventListener('submit', function (event) {
-      event.preventDefault();
-
-      var formData = new FormData(this);
-
-      fetch('/request_loan', {
-          method: 'POST',
-          body: formData
-      })
-      .then(response => response.json())
-      .then(data => {
-          if (data.success) {
-              document.getElementById('transactionMessage').innerHTML = 'Loan request successful. Reloading page...';
-              setTimeout(function () {
-                  location.reload();
-              }, 2000);
-          } else {
-              document.getElementById('transactionMessage').innerHTML = 'Loan request failed: ' + data.error;
-          }
-      })
-      .catch(error => {
-          console.error('Error during fetch:', error);
-      });
-  });  
 
     document.addEventListener('DOMContentLoaded', function () {
       const toggleBtn = document.querySelector('.nav__toggle-btn');

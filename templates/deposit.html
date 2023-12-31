@@ -61,6 +61,15 @@
             <a class="nav__link" href="/dashboard">Dashboard</a>
           </li>
           <li class="nav__item">
+            <a class="nav__link" href="/deposit">Deposit</a>
+          </li>
+          <li class="nav__item">
+            <a class="nav__link" href="/transfer">Transfer</a>
+          </li>
+          <li class="nav__item">
+            <a class="nav__link" href="/request_loan">Request loan</a>
+          </li>
+          <li class="nav__item">
             <a class="nav__link" href="/feedbacks">Complains</a>
           </li>
           <li class="nav__item">
@@ -70,39 +79,58 @@
         <button class="nav__toggle-btn" aria-label="Toggle navigation">
           <span class="nav__icon">&nbsp;</span>
         </button>
-      </nav>  
+      </nav>    
 
-  <main>
-    <section id="breadcrumbs" class="breadcrumbs">
-  <div class="container">
-    <h1 style="color: #3bb986" class="mt-4 mb-3">Leave Your Feedback</h1>
-    <p style="color: red" class="mt-4 mb-3">For fast resolution use the live chat</p>
-    <form method="POST" action="/submit_feedback">
-        <div class="form-group">
-            <label style="color: #3bb986" for="name">Name:</label>
-            <input type="text" class="form-control" id="name" name="name" required>
-        </div>
-        <div class="form-group">
-            <label style="color: #3bb986" for="feedback">Feedback:</label>
-            <textarea class="form-control" id="feedback" name="feedback" rows="3" required></textarea>
-        </div>
-        <button type="submit" style="background-color: #3bb986;">Submit</button>
-    </form>
-</div>
-</section>
-</main>
-  <br><br><br>
-  
+    <main class="app">
+      
+      <!-- OPERATION: Deposit -->
+      <div class="operation operation--transfer">
+        <h2>Deposit money</h2>
+        <p id="errorMessage" style="color: red;"></p>
+        <form class="form form--transfer" method="POST" action="/deposit">
+          
+          <label class="form__label" for="account_id" >Account Id Number</label>
+          <input type="number" class="form__input form__input--amounto" id="account_id" name="account_id" required/>
+          
+          <label class="form__label" for="amount" >Amount</label>
+          <input type="number" class="form__input form__input--amount" id="amount" name="amount" required/>
+          
+          <button class="form__btn form__btn--transfer" type="submit">Deposit</button>          
+        </form>
+      </div><br><br>
+    </main>
 
-  <div id="preloader"></div>
-  <a href="#" class="back-to-top d-flex align-items-center justify-content-center"><i class="bi bi-arrow-up-short"></i></a>
+      <footer class="footer">
+        <ul class="footer__nav">
+          <li class="footer__item">
+            <a class="footer__link" href="#">About</a>
+          </li>
+          <li class="footer__item">
+            <a class="footer__link" href="#">Pricing</a>
+          </li>
+          <li class="footer__item">
+            <a class="footer__link" href="#">Terms of Use</a>
+          </li>
+          <li class="footer__item">
+            <a class="footer__link" href="#">Privacy Policy</a>
+          </li>
+          <li class="footer__item">
+            <a class="footer__link" href="#">Careers</a>
+          </li>
+          <li class="footer__item">
+            <a class="footer__link" href="#">Blog</a>
+          </li>
+          <li class="footer__item">
+            <a class="footer__link" href="#">Contact Us</a>
+          </li>
+        </ul>
+      </footer>
 
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
     <!-- Include Bootstrap JS and Popper.js -->
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
-    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>  
-
+    <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
     <script>
     document.addEventListener('DOMContentLoaded', function () {
       const toggleBtn = document.querySelector('.nav__toggle-btn');

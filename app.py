@@ -263,27 +263,11 @@ def createaccount():
     # Render the createaccount page
     return render_template('createaccount.html')
 
-@app.route('/accounts')
-def accounts():
-    if g.user is None:
-        return redirect(url_for('login'))
-    
-    # Fetch the current user's accounts
-    user_accounts = Account.query.filter_by(user_id=g.user['id']).all()
-    return render_template('accounts.html', user_accounts=user_accounts)
-
 @app.template_filter('group_digits')
 def group_digits(s):
     # Format the string s by grouping digits in fours
     grouped_digits = [s[i:i + 4] for i in range(0, len(s), 4)]
     return ' '.join(grouped_digits)
-
-@app.route('/cardpayment')
-def cardpayment():
-    if g.user is None:
-        return redirect(url_for('login'))
-    user_cards = Card.query.filter_by(user_id=g.user['id']).all()
-    return render_template('cardpayment.html', user_cards=user_cards)
 
 def generate_card_number(card_type):
     card_prefixes = {
@@ -325,7 +309,6 @@ def generate_card():
     cvv = generate_cvv()
     expiration_date = generate_expiration_date()
     cardholder_name = request.form.get('name')
-    # Assuming g.user is the currently logged-in user
     user_id=g.user['id']
 
     # Create a new Card instance and associate it with the current user
@@ -342,14 +325,6 @@ def feedbacks():
     if g.user is None:
         return redirect(url_for('index'))
     return render_template('feedbacks.html')
-
-@app.route('/view_receipt/<int:transaction_id>')
-def view_receipt(transaction_id):
-    if g.user is None:
-        return redirect(url_for('login'))
-
-    transaction = Transaction.query.get(transaction_id)
-    return render_template('view_receipt.html', transaction=transaction)
 
 # Route for processing transactions
 def process_transaction_logic(account_id, amount, description, transaction_type, acc_number, destination_country=None, currency=None):
@@ -423,14 +398,6 @@ def process_transaction():
         return jsonify(success=False, error=result['error_message'])
     else:
         return jsonify(success=True, message=result['confirmation_message'])
-    
-@app.route('/loan_history/<int:account_id>')
-def loan_history(account_id):
-    if g.user is None:
-        return redirect(url_for('login'))
-
-    loan_history = Loan.query.filter_by(account_id=account_id).all()
-    return render_template('loan_history.html', account_id=account_id, loan_history=loan_history)
 
 @app.route('/request_loan', methods=['GET', 'POST'])
 def request_loan():
@@ -467,7 +434,7 @@ def request_loan():
         else:
             return jsonify(success=False, error='Loan request failed.')
 
-    return render_template('request_loan.html')  # Replace with the actual template name
+    return render_template('request_loan.html')
 
 @app.route('/deposit', methods=['GET', 'POST'])
 def deposit():
@@ -572,6 +539,19 @@ def bank_statement():
     # Render the bank statement filter form
     return render_template('bank_statement_filter.html')
 
+@app.route('/transfer')
+def transfer():
+    if g.user is None:
+        return redirect(url_for('login'))
+    
+    user_accounts = Account.query.filter_by(user_id=g.user['id']).all()
+    return render_template('transfer.html', user_accounts=user_accounts)
+
+@app.route('/cards')
+def cards():
+    if g.user is None:
+        return redirect(url_for('login'))
+    return render_template('cards.html')
 
 @app.errorhandler(400)
 def handle_bad_request(e):
