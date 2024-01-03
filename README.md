@@ -45,14 +45,14 @@ This is a web application that provides users with a simplified and digital bank
 
 ### Prerequisites<a name="prerequisites"></a>
 
-- Python 3.x
+- Python 3
 - Flask
-- SQLite
+- SQL
 
 ### Installation<a name="installation"></a>
 
-1. Clone the repository: `git clone https://github.com/your-username/bankist.git`
-2. Navigate to the project directory: `cd bankist`
+1. Clone the repository: `git clone https://github.com/freshpex/Bankist-Web-App.git`
+2. Navigate to the project directory: `cd Bankist-Web-App`
 3. Install dependencies: `pip install -r requirements.txt`
 
 ### Configuration<a name="configuration"></a>
@@ -180,8 +180,4 @@ python create_db.py
 
 ## 8. Contributing<a name="contributing"></a>
 
-Contributions are welcome! Follow the guidelines in the [CONTRIBUTING.md](CONTRIBUTING.md) file.
-
-## 9. License<a name="license"></a>
-
-This project is licensed under the [MIT License](LICENSE).
+Contributions are welcome!

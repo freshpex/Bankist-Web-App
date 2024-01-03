@@ -1,7 +1,0 @@
--- -- create Table for underweight who eat daily
--- CREATE TABLE IF NOT EXISTS Under_weight3 (
---   Date TEXT Not NULL,
---   BreakFast TEXT,
---   Lunch TEXT,
---   Dinner TEXT
--- );

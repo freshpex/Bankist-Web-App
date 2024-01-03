@@ -146,6 +146,7 @@
       <div class="operation operation--transfer">
         <h2>Transfer money</h2>
         <p id="errorMessage" style="color: red;"></p>
+        <div id="transactionMessage"></div>
         <form class="form form--transfer" method="POST" action="{{ url_for('process_transaction') }}">
           <label class="form__label">Transfer to</label>
           <input type="text" class="form__input form__input--to" name="acc_name" required/>
@@ -196,6 +197,7 @@
       <div class="operation operation--loan">
         <h2>Request loan</h2>
         <p id="errorMessage" style="color: red;"></p>
+        <div id="transactionMessage" style="font-weight: bold;"></div>
         <form class="form form--loan" method="POST" action="/request_loan">
           <input type="number" class="form__input form__input--loan-amount" name="amount" required/>
           <label class="form__label form__label--loan">Amount</label>
@@ -424,12 +426,13 @@
                   location.reload();
               }, 2000);
           } else {
-            // Loan request failed, show an error message
-            $("#errorMessage").text(response.error);
+              document.getElementById('transactionMessage').innerHTML = 'Loan request failed: ' + data.error;
           }
-        }
+      })
+      .catch(error => {
+          console.error('Error during fetch:', error);
       });
-    });    
+  });  
 
     document.addEventListener('DOMContentLoaded', function () {
       const toggleBtn = document.querySelector('.nav__toggle-btn');

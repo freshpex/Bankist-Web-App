@@ -64,3 +64,4 @@ stripe
 SQLAlchemy
 sqlparse
 urllib3
+firebase-admin

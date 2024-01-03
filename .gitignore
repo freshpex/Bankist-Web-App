@@ -1,3 +1,9 @@
 # Ignore seed and schema files
 seed.sql
 schema.sql
+
+.env
+
+initdb.py
+
+__pycache__
