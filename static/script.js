@@ -232,3 +232,87 @@ const slider = () => {
   });
 };
 slider();
+
+document.getElementById('signupForm').addEventListener('submit', function (event) {
+  event.preventDefault();
+
+  var formData = new FormData(event.target);
+
+  fetch('/signup', {
+      method: 'POST',
+      body: formData
+  })
+  .then(response => response.json())
+  .then(data => {
+      if (data.success) {
+          document.getElementById('signupForm').style.display = 'none';
+
+          document.getElementById('loginForm').style.display = 'block';
+          $("#errorMessage").text("");
+      } else {
+          $("#errorMessage").text(data.error);
+      }
+  })
+  .catch(error => {
+      console.log("Error:", error);
+      $("#errorMessage").text(error);
+  });
+});
+
+document.getElementById('showLoginBtn').addEventListener('click', function () {
+  document.getElementById('signupForm').style.display = 'none';
+  document.getElementById('loginForm').style.display = 'block';
+});
+
+document.getElementById('showSignupBtn').addEventListener('click', function () {
+  document.getElementById('loginForm').style.display = 'none';
+  document.getElementById('signupForm').style.display = 'block';
+});
+
+document.getElementById('loginForm').addEventListener('submit', function (event) {
+// Prevent the form from submitting normally
+event.preventDefault();
+
+// Get the form data
+var formData = new FormData(event.target);
+
+// Send the form data to the server
+fetch('/login', {
+    method: 'POST',
+    body: formData
+})
+.then(response => {
+    // Check if the response is HTML
+    if (response.headers.get('content-type').includes('text/html')) {
+        // Assume successful login and redirect
+        window.location.href = '/dashboard';
+    } else {
+        return response.json();
+    }
+})
+.then(data => {
+    if (data) {
+        if (data.success) {
+            // Redirect to the dashboard
+            window.location.href = '/dashboard';
+        } else {
+            // Display login error on the login form
+            $("#loginForm #errorMessage").text(data.error);
+        }
+    }
+})
+.catch(error => {
+    // Handle network error or other issues
+    console.log("Error:", error);
+    $("#loginForm #errorMessage").text(error);
+});
+});
+
+document.addEventListener('DOMContentLoaded', function () {
+const toggleBtn = document.querySelector('.nav__toggle-btn');
+const navLinks = document.querySelector('.nav__links');
+
+toggleBtn.addEventListener('click', function () {
+navLinks.classList.toggle('active');
+});
+});

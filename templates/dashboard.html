@@ -30,7 +30,6 @@
       href="https://fonts.googleapis.com/css?family=Poppins:300,400,500,600&display=swap"
       rel="stylesheet"
     />
-    <script defer src="../static/script.js"></script>
 
     <link rel="stylesheet" href="../static/style.css" />
     <link rel="stylesheet" href="../static/dashboard.css" />
@@ -72,6 +71,7 @@
 
       {% if user_accounts%}
     <main class="app">
+      <img src="{{ profile_image_url }}" alt="Profile Image" style="height: 150px; width: 150px; border-radius: 50%; border: 5px solid #3bb986; position: absolute; top: 20px; right: 20px; margin-buttom: 50px: margin-top: 150px:">
       {% for account in user_accounts %}
       <!-- BALANCE -->
       <div class="balance">
@@ -145,8 +145,7 @@
       <!-- OPERATION: TRANSFERS -->
       <div class="operation operation--transfer">
         <h2>Transfer money</h2>
-        <p id="errorMessage" style="color: red;"></p>
-        <div id="transactionMessage"></div>
+        <div id="transactionMessage" style="font-weight: bold;"></div>
         <form class="form form--transfer" method="POST" action="{{ url_for('process_transaction') }}">
           <label class="form__label">Transfer to</label>
           <input type="text" class="form__input form__input--to" name="acc_name" required/>
@@ -156,6 +155,10 @@
           <input type="number" class="form__input form__input--amount" name="amount" step="0.01" required/>
 
           <br>
+          <label class="form__label" >Pin</label>          
+          <input type="number" class="form__input form__input--amount" name="pin" required/>
+          <br>
+
           <label class="form__label" for="transaction_type">Transaction Type:</label>
           <select class="form__input form__input--amount" name="transaction_type" id="transaction_type" required>
               <option value="local">Local Transfer</option>
@@ -181,6 +184,11 @@
           <input class="form__input form__input--amount" type="number" name="acc_number" required>      
         
           <br>
+
+          <label class="form__label" for="description">Description:</label>
+          <input class="form__input" type="text" name="description" required>      
+        
+          <br>
           <label class="form__label" for="source_account">Source Account ID:</label>
           <select class="form__input form__input--amount" name="source_account" required>
               {% for account in user_accounts %}
@@ -196,11 +204,13 @@
       <!-- OPERATION: LOAN -->
       <div class="operation operation--loan">
         <h2>Request loan</h2>
-        <p id="errorMessage" style="color: red;"></p>
-        <div id="transactionMessage" style="font-weight: bold;"></div>
+        <div id="loanMessage" style="font-weight: bold;"></div>
         <form class="form form--loan" method="POST" action="/request_loan">
-          <input type="number" class="form__input form__input--loan-amount" name="amount" required/>
           <label class="form__label form__label--loan">Amount</label>
+          <input type="number" class="form__input form__input--loan-amount" name="amount" required/>
+
+          <label class="form__label" >Pin</label>          
+          <input type="number" class="form__input form__input--amount" name="pin" required/>
 
           <label class="form__input form__input--to" for="account_id">Account ID:</label>
           <input class="form__input form__input--to" type="text" name="account_id" required>
@@ -348,101 +358,9 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
-    <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        function updateCurrentDate() {
-          const currentDateElement = document.getElementById('currentDate');
-          const currentDate = new Date();
-    
-          const formattedDate = `${currentDate.getMonth() + 1}/${currentDate.getDate()}/${currentDate.getFullYear()}`;
-  
-          currentDateElement.textContent = formattedDate;
-        }
-    
-        updateCurrentDate();    
-        setInterval(updateCurrentDate, 1000);
-      });
-
-      function toggleBalance(button) {
-        var targetId = button.getAttribute("data-target");
-        var target = document.getElementById(targetId);
-        if (target.style.display === "none") {
-          target.style.display = "inline";
-          button.innerHTML = "<i class='fa fa-eye'></i>";
-        } else {
-          target.style.display = "none";
-          button.innerHTML = "<i class='fa fa-eye-slash'></i>";
-        }
-      }
-
-      document.getElementById('transaction_type').addEventListener('change', function() {
-        var internationalFields = document.getElementById('international_fields');
-        if (this.value === 'international') {
-            internationalFields.style.display = 'block';
-        } else {
-            internationalFields.style.display = 'none';
-        }
-    });
-
-    document.querySelector('.form--transfer').addEventListener('submit', function (event) {
-      event.preventDefault();
-
-      var formData = new FormData(this);
-
-      fetch('/process_transaction', {
-          method: 'POST',
-          body: formData
-      })
-      .then(response => response.json())
-      .then(data => {
-          if (data.success) {
-              document.getElementById('transactionMessage').innerHTML = 'Transaction successful. Reloading page...';
-              setTimeout(function () {
-                  location.reload();
-              }, 2000); 
-          } else {
-              document.getElementById('transactionMessage').innerHTML = 'Transaction failed: ' + data.error;
-          }
-      })
-      .catch(error => {
-          console.error('Error during fetch:', error);
-      });
-  });
-
-  document.querySelector('.form--loan').addEventListener('submit', function (event) {
-      event.preventDefault();
-
-      var formData = new FormData(this);
-
-      fetch('/request_loan', {
-          method: 'POST',
-          body: formData
-      })
-      .then(response => response.json())
-      .then(data => {
-          if (data.success) {
-              document.getElementById('transactionMessage').innerHTML = 'Loan request successful. Reloading page...';
-              setTimeout(function () {
-                  location.reload();
-              }, 2000);
-          } else {
-              document.getElementById('transactionMessage').innerHTML = 'Loan request failed: ' + data.error;
-          }
-      })
-      .catch(error => {
-          console.error('Error during fetch:', error);
-      });
-  });  
-
-    document.addEventListener('DOMContentLoaded', function () {
-      const toggleBtn = document.querySelector('.nav__toggle-btn');
-      const navLinks = document.querySelector('.nav__links');
-    
-      toggleBtn.addEventListener('click', function () {
-        navLinks.classList.toggle('active');
-      });
-    });
-    </script>
+    <script defer src="../static/script.js"></script>
+    <script src="../static/dashboard.js"></script>
+    <script src="../static/account.js"></script>
     </body>
   </html>
   

@@ -83,21 +83,23 @@ def signup():
         return jsonify(success=True)
     return jsonify(success=False)
 
-@app.route ('/login', methods= ['POST'])
+@app.route ('/login', methods= [ 'GET', 'POST'])
 def login_post ():
-  username = request.form['username']
-  password = request.form['password']
-  user = User.query.filter_by(username=username).first()
-  if not user:
-    error = 'Invalid email or password'
-    return jsonify(success=False, error=error)
-  password_hash = user.password
-  if check_password(password, password_hash):
-    session['user_id'] = user.id
-    return redirect('/dashboard')
-  else:
-    error = 'Invalid email or password'
-    return jsonify(success=False, error=error)
+    if  request.method == 'POST':
+        username = request.form['username']
+        password = request.form['password']
+        user = User.query.filter_by(username=username).first()
+        if not user:
+            error = 'Invalid email or password'
+            return jsonify(success=False, error=error)
+        password_hash = user.password
+        if check_password(password, password_hash):
+            session['user_id'] = user.id
+            return redirect('/dashboard')
+        else:
+            error = 'Invalid email or password'
+            return jsonify(success=False, error=error)
+    return redirect(url_for('index'))    
 
 @app.route('/signout')
 def signout():
@@ -133,8 +135,14 @@ def dashboard():
 
     deposits = sum(transaction.amount for transaction in user_transactions if transaction.amount > 0)
     withdrawals = sum(transaction.amount for transaction in user_transactions if transaction.amount < 0)
+    
+    current_user = User.query.get(g.user['id'])
+    
+    profile_image_url = url_for('static', filename=current_user.profile_image_path)
+    
+    print(profile_image_url)
 
-    return render_template('dashboard.html', user_accounts=user_accounts, deposits=deposits, withdrawals=withdrawals, user_cards=user_cards, loan_history=loan_history, user_transactions=user_transactions)
+    return render_template('dashboard.html', user_accounts=user_accounts, deposits=deposits, withdrawals=withdrawals, user_cards=user_cards, loan_history=loan_history, user_transactions=user_transactions, profile_image_url=profile_image_url)
 
 
 @app.route('/submit_feedback', methods=['POST'])
@@ -160,28 +168,44 @@ def message():
 @app.route('/products')
 def products():
     if g.user is None:
-        return redirect(url_for('login'))
+        return redirect(url_for('login_post'))
     return render_template('products.html')
 
 @app.route('/createaccount', methods=['GET', 'POST'])
 def createaccount():
     if g.user is None:
-        return redirect(url_for('login'))
+        return redirect(url_for('login_post'))
     
     if request.method == 'POST':
+        print(request.files)
         fname = request.form['fname']
         lname = request.form['lname']
         gender = request.form['gender']
-        picture = request.form['file']
-        id_front = request.form['file_nf']
-        id_back = request.form['file_nb']
+        picture = request.files.get('pic')
+        id_front = request.files.get('front')
+        id_back = request.files.get('back')
         account_type = request.form['account_type']
+        
+        passcode = request.form['passcode']
+        pin = request.form.get('pin')
+        
+        if passcode != "CODED":
+            return render_template('error.html', error="incorrect Passcode, Submit a complaint to an Admin")
+
+         # Save the file to the images folder
+        folder_name = 'static'
+        if not os.path.exists(folder_name):
+            os.makedirs(folder_name)
+        filename = secure_filename(picture.filename)
+        picture.save(os.path.join(folder_name, filename))
 
         current_user = User.query.get(g.user['id'])
         current_user.firstname = fname
         current_user.lastname = lname
         current_user.gender = gender
         current_user.account_type = account_type
+        current_user.pin = pin
+        current_user.profile_image_path = filename
 
         new_account = Account(user_id=g.user['id'], account_type=account_type)
         db.session.add(new_account)
@@ -193,7 +217,7 @@ def createaccount():
 @app.route('/accounts')
 def accounts():
     if g.user is None:
-        return redirect(url_for('login'))
+        return redirect(url_for('login_post'))
     
     user_accounts = Account.query.filter_by(user_id=g.user['id']).all()
     return render_template('accounts.html', user_accounts=user_accounts)
@@ -206,7 +230,7 @@ def group_digits(s):
 @app.route('/cardpayment')
 def cardpayment():
     if g.user is None:
-        return redirect(url_for('login'))
+        return redirect(url_for('login_post'))
     user_cards = Card.query.filter_by(user_id=g.user['id']).all()
     return render_template('cardpayment.html', user_cards=user_cards)
 
@@ -244,7 +268,7 @@ def generate_expiration_date():
 @app.route('/generate-card', methods=['POST'])
 def generate_card():
     if g.user is None:
-        return redirect(url_for('login'))
+        return redirect(url_for('login_post'))
     card_type = request.form.get('card')
     card_number = generate_card_number(card_type)
     cvv = generate_cvv()
@@ -268,7 +292,7 @@ def feedbacks():
 @app.route('/view_receipt/<int:transaction_id>')
 def view_receipt(transaction_id):
     if g.user is None:
-        return redirect(url_for('login'))
+        return redirect(url_for('login_post'))
 
     transaction = Transaction.query.get(transaction_id)
     return render_template('view_receipt.html', transaction=transaction)
@@ -278,10 +302,10 @@ def process_transaction_logic(account_id, amount, description, transaction_type,
     international_fee = INTERNATIONAL_FEE
 
     if not account:
-        return render_template('error.html', error_message='Invalid source account.')
+        return jsonify(success=False, error='Insufficient funds')
 
     if account.balance < amount:
-        return render_template('error.html', error_message='Insufficient funds.')
+        return jsonify(success=False, error='Insufficient funds')
 
     account.balance -= amount
 
@@ -334,14 +358,24 @@ def process_transaction():
     currency = request.form.get('currency')
     acc_number = request.form.get('acc_number')
     acc_name = request.form.get('acc_name')
+    pin = int(request.form.get('pin'))
+    
+    current_user = User.query.get(g.user['id'])
+    
+    if pin != current_user.pin:
+        return jsonify(success=False, error='Incorrect Pin')
 
     result = process_transaction_logic(account_id, amount, description, transaction_type, acc_number, destination_country, currency)
 
-    if 'error_message' in result:
-        return jsonify(success=False, error=result['error_message'])
-    else:
-        return jsonify(success=True, message=result['confirmation_message'])
-    
+    if hasattr(result, 'json'):
+        result = result.json        
+        
+    if result:
+        if 'error' in result:
+            return jsonify(success=False, error=result['error'])
+        else:
+            return jsonify(success=True, message=result['confirmation_message'])
+        
 @app.route('/loan_history/<int:account_id>')
 def loan_history(account_id):
     if g.user is None:
@@ -353,19 +387,17 @@ def loan_history(account_id):
 @app.route('/request_loan', methods=['GET', 'POST'])
 def request_loan():
     if g.user is None:
-        return redirect(url_for('login'))
+        return redirect(url_for('login_post'))
 
     if request.method == 'POST':
         account_id = request.form.get('account_id')
         amount = request.form.get('amount')
-
-        if amount is not None:
-            try:
-                amount = float(amount)
-            except ValueError:
-                return jsonify(success=False, error='Invalid amount provided.')
-        else:
-            return jsonify(success=False, error='Amount is required.')
+        pin = int(request.form.get('pin'))
+    
+        current_user = User.query.get(g.user['id'])
+        
+        if pin != current_user.pin:
+            return jsonify(success=False, error='Incorrect Pin')
 
         new_loan = Loan(account_id=account_id, amount=amount, status='pending')
 
@@ -387,7 +419,7 @@ def request_loan():
 @app.route('/deposit', methods=['GET', 'POST'])
 def deposit():
     if g.user is None:
-        return redirect(url_for('login'))
+        return redirect(url_for('login_post'))
     
     if request.method == 'POST':
         amount = float(request.form['amount'])
@@ -400,6 +432,17 @@ def deposit():
 
         if account.balance is None:
             account.balance = 0.0
+
+        account.balance += amount
+
+        new_transaction = Transaction(
+            description='Deposit',
+            amount=amount,
+            user_id=g.user['id']
+        )
+        
+        db.session.add(new_transaction)
+        db.session.commit()
 
         # Create a Stripe Session
         session = stripe.checkout.Session.create(
@@ -460,7 +503,7 @@ def deposit_cancel():
 @app.route('/bank_statement', methods=['GET', 'POST'])
 def bank_statement():
     if g.user is None:
-        return redirect(url_for('login'))
+        return redirect(url_for('login_post'))
 
     if request.method == 'POST':
         start_date = request.form.get('start_date')
@@ -474,7 +517,6 @@ def bank_statement():
         return render_template('bank_statement.html', user_transactions=user_transactions)
 
     return render_template('bank_statement_filter.html')
-
 
 @app.errorhandler(400)
 def handle_bad_request(e):

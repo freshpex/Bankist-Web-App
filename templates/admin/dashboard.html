@@ -1,0 +1,59 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4">Admin Dashboard</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th scope="col">Tracking ID</th>
+                <th scope="col">Sender Name</th>
+                <th scope="col">Sender Address</th>
+                <th scope="col">Sender Email</th>
+                <th scope="col">Sender Phone</th>
+                <th scope="col">Recipient Name</th>
+                <th scope="col">Recipient Address</th>
+                <th scope="col">Recipient Email</th>
+                <th scope="col">Recipient Phone</th>
+                <th scope="col">Description</th>
+                <th scope="col">Amount</th>
+                <th scope="col">Freights</th>
+                <th scope="col">Sender Country</th>
+                <th scope="col">Delivery Date</th>
+                <th scope="col">Delivery Location</th>
+                <th scope="col">Order Date</th>
+                <th scope="col">Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for delivery in deliveries %}
+                <tr>
+                    <td>{{ delivery.tracking_id }}</td>
+                    <td>{{ delivery.sender_name }}</td>
+                    <td>{{ delivery.sender_address }}</td>
+                    <td>{{ delivery.sender_email }}</td>
+                    <td>{{ delivery.sender_phone }}</td>
+                    <td>{{ delivery.recipient_name }}</td>
+                    <td>{{ delivery.recipient_address }}</td>
+                    <td>{{ delivery.recipient_email }}</td>
+                    <td>{{ delivery.recipient_phone }}</td>
+                    <td>{{ delivery.description }}</td>
+                    <td>{{ delivery.amount }}</td>
+                    <td>{{ delivery.freights }}</td>
+                    <td>{{ delivery.sender_country }}</td>
+                    <td>{{ delivery.expected_delivery_date }}</td>
+                    <td>{{ delivery.pickup_location }}</td>
+                    <td>{{ delivery.order_date.strftime('%Y-%m-%d') }}</td>
+                    <td>
+                        <a href="{{ url_for('edit_delivery', id=delivery.id) }}" class="btn btn-primary">Edit</a>
+                        <form action="{{ url_for('delete_delivery', id=delivery.id) }}" method="post">
+                            <input type="submit" value="Delete" class="btn btn-danger">
+                        </form>                        
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+{% endblock %}

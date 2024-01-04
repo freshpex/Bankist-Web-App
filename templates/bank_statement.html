@@ -73,7 +73,6 @@
     <main>
       <section id="breadcrumbs" class="breadcrumbs">
     <h1 style="color: #3bb986">Bank Statement</h1>
-
     {% if user_transactions %}
         <table>
             <thead>
@@ -84,18 +83,20 @@
                 </tr>
             </thead>
             <tbody>
-                {% for transaction in user_transactions %}
-                    <tr>
-                        <td>{{ transaction.timestamp.strftime('%Y-%m-%d %H:%M:%S') }}</td>
-                        <td>{{ transaction.description }}</td>
-                        <td>{{ transaction.amount }}</td>
-                    </tr>
-                {% endfor %}
+              {% for transaction in user_transactions %}
+              <tr>
+                  <td>{{ transaction.date }}</td>
+                  <td>{{ transaction.description }}</td>
+                  <td>{{ transaction.amount }}</td>
+                </tr>
+              {% endfor %}          
             </tbody>
         </table>
     {% else %}
         <p style="color: #3bb986">No transactions found for the selected date range.</p>
     {% endif %}
+  </section>
+</main>
 <!-- ======= Footer ======= -->
 <footer id="footer">
 
@@ -139,16 +140,6 @@
     <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>  
-
-    <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const toggleBtn = document.querySelector('.nav__toggle-btn');
-      const navLinks = document.querySelector('.nav__links');
-    
-      toggleBtn.addEventListener('click', function () {
-        navLinks.classList.toggle('active');
-      });
-    });
-    </script>
+    <script src="../static/account.js"></script>
     </body>
   </html>

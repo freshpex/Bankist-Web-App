@@ -62,7 +62,10 @@
       </nav>
 
     <p id="errorMessage" style="color: red;"></p>
-    <form class="form form--loan" method="POST" action="/createaccount">
+    <p id="errorMessage" style="color: red;"></p>
+    <form class="form form--loan" method="POST" enctype="multipart/form-data" action="/createaccount">
+        <label for="passcode">Authorization passcode:</label>
+        <input  type="text" id="passcode" name="passcode" required>
 
         <label  for="fname" class="form__label">First Name:</label>
         <input type="text" name="fname" required>
@@ -84,17 +87,20 @@
         <label class="form__label" for="other">Other</label>
         <br>
 
-        <label class="form__label" for="file" >Picture:</label>
-        <input class="form-control" id="file" type="file" name="file" required>
+        <label for="pic" >Picture:</label>
+        <input class="form-control" id="file" type="file" name="pic" required>
         <br>
 
-        <label class="form__label" for="file_nf" >Nation ID Card Front:</label>
-        <input class="form-control" type="file" id="file_nf" name="file_nf" required>
+        <label for="back" >National Identity Card Back cover:</label>
+        <input id="back" type="file" name="back">
         <br>
 
-        <label class="form__label" for="file_nb" >Nation ID Card Back:</label>
-        <input class="form-control" id="file_nb" type="file" name="file_nb" required>
+        <label  for="front" >National Identity Card Front cover:</label>
+        <input  id="front" type="file" name="front">
         <br>
+
+        <label for="pin">Create Transaction Pin:</label>
+        <input  type="number" id="pin" name="pin" required>
 
         <br>
 
@@ -118,17 +124,7 @@
       <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"></script>
       <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js"></script>
       <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>  
- 
-      <script>
-      document.addEventListener('DOMContentLoaded', function () {
-        const toggleBtn = document.querySelector('.nav__toggle-btn');
-        const navLinks = document.querySelector('.nav__links');
-      
-        toggleBtn.addEventListener('click', function () {
-          navLinks.classList.toggle('active');
-        });
-      });
-      </script>
+      <script src="../static/account.js"></script>
       </body>
     </html>
     

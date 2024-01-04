@@ -2,6 +2,8 @@ import sqlite3, random
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy import Boolean, Integer, Column, ForeignKey, String
 from datetime import datetime
+from flask_login import UserMixin
+from werkzeug.security import generate_password_hash, check_password_hash
 
 # Initializing an instance of the SQLAlchemy class
 db = SQLAlchemy()
@@ -15,7 +17,8 @@ class User(db.Model):
     gender = db.Column(db.String(50))
     privacy_enabled = db.Column(db.Boolean, default=False)
     notification_enabled = db.Column(db.Boolean, default=False)
-    profile_image = db.Column(db.String(2505))
+    profile_image_path = db.Column(db.String(255), default='default.png')
+    pin = db.Column(db.Integer)
     account_type = db.Column(db.String(10))
     accounts = db.relationship('Account', backref='user', lazy=True)
     password = db.Column(db.String(64))

@@ -1,0 +1,67 @@
+{% extends 'admin/base.html' %}
+
+{% block title %}Edit Delivery{% endblock %}
+
+{% block content %}
+    <h1 class="mb-4">Edit Delivery</h1>
+
+    <form action="{{ url_for('edit_delivery', id=delivery.id) }}" method="post">
+        <div class="form-group">
+            <label for="tracking_id">Tracking ID</label>
+            <input type="text" class="form-control" id="tracking_id" name="tracking_id" value="{{ delivery.tracking_id }}">
+        </div>
+        <div class="form-group">
+            <label for="sender_name">Sender Name</label>
+            <input type="text" class="form-control" id="sender_name" name="sender_name" value="{{ delivery.sender_name }}">
+        </div>
+        <div class="form-group">
+            <label for="sender_address">Sender Address</label>
+            <input type="text" class="form-control" id="sender_address" name="sender_address" value="{{ delivery.sender_address }}">
+        </div>
+        <div class="form-group">
+            <label for="sender_email">Sender Email</label>
+            <input type="email" class="form-control" id="sender_email" name="sender_email" value="{{ delivery.sender_email }}">
+        </div>
+        <div class="form-group">
+            <label for="sender_phone">Sender Phone</label>
+            <input type="tel" class="form-control" id="sender_phone" name="sender_phone" value="{{ delivery.sender_phone }}">
+        </div>
+        <div class="form-group">
+            <label for="recipient_name">Recipient Name</label>
+            <input type="text" class="form-control" id="recipient_name" name="recipient_name" value="{{ delivery.recipient_name }}">
+        </div>
+        <div class="form-group">
+            <label for="recipient_address">Recipient Address</label>
+            <input type="text" class="form-control" id="recipient_address" name="recipient_address" value="{{ delivery.recipient_address }}">
+        </div>
+        <div class="form-group">
+            <label for="recipient_email">Recipient Email</label>
+            <input type="email" class="form-control" id="recipient_email" name="recipient_email" value="{{ delivery.recipient_email }}">
+        </div>
+        <div class="form-group">
+            <label for="recipient_phone">Recipient Phone</label>
+            <input type="tel" class="form-control" id="recipient_phone" name="recipient_phone" value="{{ delivery.recipient_phone }}">
+        </div>
+        <div class="form-group">
+            <label for="description">Description</label>
+            <textarea class="form-control" id="description" name="description">{{ delivery.description }}</textarea>
+        </div>
+        <div class="form-group">
+            <label for="amount">Amount</label>
+            <input type="number" class="form-control" id="amount" name="amount" value="{{ delivery.amount }}">
+        </div>
+        <div class="form-group">
+            <label for="freights">Freights</label>
+            <input type="number" class="form-control" id="freights" name="freights" value="{{ delivery.freights }}">
+        </div>
+        <div class="form-group">
+            <label for="sender_country">Sender Country</label>
+            <input type="text" class="form-control" id="sender_country" name="sender_country" value="{{ delivery.sender_country }}">
+        </div>
+        <div class="form-group">
+            <label for="pickup_location">Pickup Location</label>
+            <input type="text" class="form-control" id="pickup_location" name="pickup_location" value="{{ delivery.pickup_location }}">
+        </div>
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+    </form>
+{% endblock %}
