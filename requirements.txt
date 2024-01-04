@@ -41,7 +41,7 @@ Mako
 MarkupSafe
 pipreqs
 pluggy
-psycopg2
+psycopg2-binary==2.9.1
 pycodestyle
 pyenchant
 pyparsing
